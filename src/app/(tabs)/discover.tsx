@@ -1,1 +1,5 @@
-export { DiscoverScreen as default } from '@/screens/discover/DiscoverScreen'
+import { LibraryScreen } from '@/screens/library/LibraryScreen'
+
+export default function LibraryRoute() {
+  return <LibraryScreen />
+}

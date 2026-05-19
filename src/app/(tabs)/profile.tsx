@@ -1,1 +1,5 @@
-export { ProfileScreen as default } from '@/screens/profile/ProfileScreen'
+import { ProfileScreen } from '@/screens/profile/ProfileScreen'
+
+export default function ProfileRoute() {
+  return <ProfileScreen />
+}

@@ -1,1 +1,5 @@
-export { FeedScreen as default } from '@/screens/feed/FeedScreen'
+import { TodayScreen } from '@/screens/today/TodayScreen'
+
+export default function TodayRoute() {
+  return <TodayScreen />
+}

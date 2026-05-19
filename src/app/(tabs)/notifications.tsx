@@ -1,1 +1,5 @@
-export { NotificationsScreen as default } from '@/screens/notifications/NotificationsScreen'
+import { CommunityScreen } from '@/screens/community/CommunityScreen'
+
+export default function CommunityRoute() {
+  return <CommunityScreen />
+}

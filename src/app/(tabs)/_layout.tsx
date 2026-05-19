@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router'
 import { SymbolView, type SymbolViewProps } from 'expo-symbols'
-import { Colors } from '@/constants/theme'
+import { TL } from '@/constants/tl-theme'
 
 type SymbolName = SymbolViewProps['name']
 
@@ -13,23 +13,23 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.text2,
+        tabBarActiveTintColor: TL.amber,
+        tabBarInactiveTintColor: TL.muted,
         tabBarStyle: {
-          backgroundColor: Colors.surface,
+          backgroundColor: TL.bg,
           borderTopWidth: 1,
-          borderTopColor: Colors.muted,
+          borderTopColor: TL.border,
           elevation: 0,
           shadowOpacity: 0,
         },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: '500' },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '600' },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: icon('house.fill') }} />
-      <Tabs.Screen name="discover" options={{ title: 'Discover', tabBarIcon: icon('safari.fill') }} />
-      <Tabs.Screen name="create" options={{ title: '', tabBarIcon: icon('plus.circle.fill', 30) }} />
-      <Tabs.Screen name="notifications" options={{ title: 'Activity', tabBarIcon: icon('bell.fill') }} />
-      <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: icon('person.fill') }} />
+      <Tabs.Screen name="index" options={{ title: 'Today', tabBarIcon: icon('house.fill') }} />
+      <Tabs.Screen name="discover" options={{ title: 'Library', tabBarIcon: icon('books.vertical.fill') }} />
+      <Tabs.Screen name="notifications" options={{ title: 'Community', tabBarIcon: icon('bubble.left.fill') }} />
+      <Tabs.Screen name="profile" options={{ title: 'You', tabBarIcon: icon('person.fill') }} />
+      <Tabs.Screen name="create" options={{ href: null }} />
     </Tabs>
   )
 }

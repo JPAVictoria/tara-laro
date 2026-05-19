@@ -10,6 +10,7 @@ import Animated, {
   withSequence,
   runOnJS,
   Easing,
+  type SharedValue,
 } from 'react-native-reanimated'
 
 export function SplashScreen() {
@@ -38,7 +39,7 @@ export function SplashScreen() {
     taglineY.value = withDelay(550, withSpring(0, { damping: 14, stiffness: 100 }))
 
     // Dots pulse one by one
-    const pulse = (sv: Animated.SharedValue<number>, delay: number) => {
+    const pulse = (sv: SharedValue<number>, delay: number) => {
       sv.value = withDelay(
         delay,
         withSequence(

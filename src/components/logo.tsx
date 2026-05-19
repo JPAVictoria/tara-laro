@@ -1,13 +1,4 @@
-import Svg, {
-  Rect,
-  Circle,
-  Path,
-  G,
-  Defs,
-  LinearGradient,
-  Stop,
-  RoundedRect,
-} from 'react-native-svg'
+import Svg, { Rect, Circle, Path, Defs, LinearGradient, Stop } from 'react-native-svg'
 import { View, Text, StyleSheet } from 'react-native'
 
 interface LogoIconProps {

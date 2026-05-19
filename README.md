@@ -1,56 +1,115 @@
-# Welcome to your Expo app 👋
+# tara-laro
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A social hub for the global gaming community. Discover new titles, read and write reviews, post your gaming content, follow other gamers, and stay up-to-date with gaming news — all in one place.
 
-## Get started
+## Tech Stack
 
-1. Install dependencies
+| Layer | Technology |
+|---|---|
+| Framework | Expo 55 + expo-router (file-based routing) |
+| Language | TypeScript |
+| Styling | NativeWind (Tailwind CSS for React Native) |
+| Database | PostgreSQL via Supabase |
+| ORM | Prisma (via Expo API Routes) |
+| Auth | Supabase Auth (Email, Google, Discord OAuth) |
+| Storage | Supabase Storage |
+| Realtime | Supabase Realtime |
+| Data Fetching | TanStack React Query |
 
-   ```bash
-   npm install
-   ```
+## Prerequisites
 
-2. Start the app
+- Node.js 20.19+
+- Expo CLI (`npm install -g expo-cli`)
+- A [Supabase](https://supabase.com) project with PostgreSQL enabled
 
-   ```bash
-   npx expo start
-   ```
+## Environment Variables
 
-In the output, you'll find options to open the app in a
+Create a `.env` file in the project root:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+DATABASE_URL=postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> Never commit `.env` to version control. It is already in `.gitignore`.
 
-### Other setup steps
+## Getting Started
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+# Install dependencies
+npm install
 
-## Learn more
+# Push the Prisma schema to your Supabase database
+npx prisma db push
 
-To learn more about developing your project with Expo, look at the following resources:
+# Seed initial game data
+npx prisma db seed
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Start the development server
+npx expo start
+```
 
-## Join the community
+From the Expo dev server you can open the app in:
+- **iOS Simulator** — press `i`
+- **Android Emulator** — press `a`
+- **Physical device** — scan the QR code with the Expo Go app
 
-Join our community of developers creating universal apps.
+## Project Structure
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+  app/
+    (auth)/         # Login, register, forgot password
+    (tabs)/         # Main tab navigation (feed, discover, create, notifications, profile)
+    games/[id].tsx  # Game detail
+    posts/[id].tsx  # Post detail
+    users/[username].tsx
+    api/            # Expo API Routes (server-side, Prisma runs here)
+  components/
+    ui/             # Design system atoms (Button, Input, Avatar, Card...)
+    feed/           # PostCard, FeedHeader, PostActions
+    games/          # GameCard, RatingStars
+    profile/        # ProfileHeader, PostGrid
+  lib/
+    supabase.ts     # Supabase client
+    prisma.ts       # Prisma client singleton
+  hooks/            # use-auth, use-feed, use-game
+  constants/
+    theme.ts        # Color palette, spacing, typography
+  types/
+    index.ts        # Shared TypeScript types
+```
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm start` | Start the Expo dev server |
+| `npm run ios` | Open in iOS simulator |
+| `npm run android` | Open in Android emulator |
+| `npm run lint` | Run ESLint via `expo lint` |
+| `npx prisma studio` | Open Prisma Studio (DB browser) |
+| `npx prisma db push` | Sync schema changes to the database |
+
+## Build & Deploy
+
+This project uses [EAS Build](https://docs.expo.dev/build/introduction/) for production builds.
+
+```bash
+# Install EAS CLI
+npm install -g eas-cli
+
+# Configure EAS (first time only)
+eas build:configure
+
+# Trigger a preview build
+eas build --profile preview --platform ios
+eas build --profile preview --platform android
+```
+
+Make sure all env vars are added to your EAS project secrets before building.
+
+## Contributing
+
+See [CHECKLIST.md](./CHECKLIST.md) for the full 30-day build roadmap.

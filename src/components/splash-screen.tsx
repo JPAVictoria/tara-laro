@@ -13,8 +13,9 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated'
 
-export function SplashScreen() {
+export function SplashScreen({ ready = false }: { ready?: boolean }) {
   const [visible, setVisible] = useState(true)
+  const [minTimePassed, setMinTimePassed] = useState(false)
 
   const bgOpacity = useSharedValue(1)
   const logoScale = useSharedValue(0.3)
@@ -27,18 +28,14 @@ export function SplashScreen() {
   const dot3 = useSharedValue(0.3)
 
   useEffect(() => {
-    // Icon bounces in
     iconScale.value = withSpring(1, { damping: 8, stiffness: 120 })
 
-    // Logo scales in with spring
     logoScale.value = withDelay(200, withSpring(1, { damping: 10, stiffness: 90 }))
     logoOpacity.value = withDelay(200, withTiming(1, { duration: 400 }))
 
-    // Tagline slides up
     taglineOpacity.value = withDelay(550, withTiming(1, { duration: 450 }))
     taglineY.value = withDelay(550, withSpring(0, { damping: 14, stiffness: 100 }))
 
-    // Dots pulse one by one
     const pulse = (sv: SharedValue<number>, delay: number) => {
       sv.value = withDelay(
         delay,
@@ -54,14 +51,16 @@ export function SplashScreen() {
     pulse(dot2, 1200)
     pulse(dot3, 1400)
 
-    // Fade everything out
-    bgOpacity.value = withDelay(
-      2500,
-      withTiming(0, { duration: 450, easing: Easing.ease }, (finished) => {
-        if (finished) runOnJS(setVisible)(false)
-      }),
-    )
+    const timer = setTimeout(() => setMinTimePassed(true), 2500)
+    return () => clearTimeout(timer)
   }, [])
+
+  useEffect(() => {
+    if (!minTimePassed || !ready) return
+    bgOpacity.value = withTiming(0, { duration: 450, easing: Easing.ease }, (finished) => {
+      if (finished) runOnJS(setVisible)(false)
+    })
+  }, [minTimePassed, ready])
 
   const bgStyle = useAnimatedStyle(() => ({ opacity: bgOpacity.value }))
   const iconStyle = useAnimatedStyle(() => ({ transform: [{ scale: iconScale.value }] }))

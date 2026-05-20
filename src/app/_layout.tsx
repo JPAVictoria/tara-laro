@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
   },
 })
 
-function AuthGate() {
+function AppShell() {
   const { session, loading, onboardingComplete } = useAuth()
   const segments = useSegments()
   const router = useRouter()
@@ -33,15 +33,18 @@ function AuthGate() {
     }
   }, [session, loading, onboardingComplete])
 
-  return null
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <SplashScreen ready={!loading} />
+    </>
+  )
 }
 
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthGate />
-      <Stack screenOptions={{ headerShown: false }} />
-      <SplashScreen />
+      <AppShell />
     </QueryClientProvider>
   )
 }

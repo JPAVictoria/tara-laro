@@ -2,8 +2,12 @@ import '../global.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { useEffect } from 'react'
+import * as ExpoSplashScreen from 'expo-splash-screen'
 import { SplashScreen } from '@/components/splash-screen'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
+
+ExpoSplashScreen.preventAutoHideAsync()
+ExpoSplashScreen.setOptions({ fade: true, duration: 200 })
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,13 +39,17 @@ function AppShell() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#FACC15' } }} />
       <SplashScreen ready={!loading} />
     </>
   )
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    ExpoSplashScreen.hideAsync()
+  }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <AppShell />

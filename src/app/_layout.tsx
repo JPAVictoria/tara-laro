@@ -19,7 +19,7 @@ function AppShell() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#FACC15' } }} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#14100A' } }} />
       <SplashScreen ready={!loading} />
     </>
   )

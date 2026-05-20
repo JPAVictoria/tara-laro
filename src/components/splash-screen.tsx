@@ -86,7 +86,7 @@ export function SplashScreen({ ready = false }: { ready?: boolean }) {
         </Animated.View>
 
         <Animated.View style={[logoStyle, styles.wordmarkRow]}>
-          <Text style={styles.logo}>tara-laro</Text>
+          <Text style={styles.logo}>TaraLaro</Text>
         </Animated.View>
 
         <Animated.View style={taglineStyle}>
@@ -106,7 +106,7 @@ export function SplashScreen({ ready = false }: { ready?: boolean }) {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: '#FACC15',
+    backgroundColor: '#14100A',
     zIndex: 1000,
     alignItems: 'center',
     justifyContent: 'center',
@@ -121,13 +121,13 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 42,
     fontWeight: '900',
-    color: '#111827',
+    color: '#F8EFD8',
     letterSpacing: -1,
   },
   tagline: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#78350F',
+    color: '#A88E62',
     letterSpacing: 0.3,
   },
   dots: {
@@ -139,6 +139,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#111827',
+    backgroundColor: '#F0A91A',
   },
 })

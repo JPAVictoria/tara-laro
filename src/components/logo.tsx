@@ -89,7 +89,7 @@ export function LogoWordmark({ iconSize = 64, showTagline = false }: LogoWordmar
   return (
     <View style={styles.wrapper}>
       <LogoIcon size={iconSize} />
-      <Text style={styles.wordmark}>tara-laro</Text>
+      <Text style={styles.wordmark}>TaraLaro</Text>
       {showTagline && <Text style={styles.tagline}>your gaming world.</Text>}
     </View>
   )

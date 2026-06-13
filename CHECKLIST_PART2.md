@@ -1,0 +1,119 @@
+# TaraLaro — Part 2: Feature Gaps & Dead UI Checklist
+
+> Audit date: 2026-06-13  
+> All items below are either dead touchables, hardcoded mock data, or missing features.  
+> Grouped by screen. Check off as you ship each fix.
+
+---
+
+## 🔴 Critical — App feels broken
+
+### Tab Navigation (`src/app/(tabs)/_layout.tsx`)
+- [ ] **"Library" tab routes to DiscoverScreen** — the tab labeled "Library" actually renders `DiscoverScreen`. `LibraryScreen` exists but is unreachable from the tab bar. Either rename the tab to "Discover" or swap in `LibraryScreen`.
+- [ ] **"Create" tab is hidden** (`href: null`) — there is no floating action button or other entry point to `CreateScreen`. Users cannot create posts at all from the main nav. Add a FAB on the feed or restore the tab.
+- [ ] **Notifications vs Community mismatch** — the `notifications` tab is labelled "Community" and renders `CommunityScreen`. If real per-user notifications exist (Day 25 Supabase Realtime was built), they need their own tab/screen.
+
+---
+
+## 🟠 Profile Screen (`src/screens/profile/ProfileScreen.tsx`)
+
+- [x] **Settings button** — gear icon in top-right now links to `/settings` ✅
+- [ ] **All data is hardcoded** — "Maya Reyes", "@mayareyes", bio, "Manila, PH", "joined 2023", avatar initials "MR". Should load from the authenticated user session (`useAuth` / Supabase user profile).
+- [ ] **Stats row is hardcoded** — 247 games, 48 reviews, 12 lists, 1.2k followers. Should query real counts from the API (`/api/users/[id]` already returns `_count`).
+- [ ] **Follow button has no `onPress`** — should call the follow/unfollow API (`/api/users/[id]/follow`).
+- [ ] **Message button has no `onPress`** — either wire to a DM flow or hide until messaging is built.
+- [ ] **Entry tiles have no `onPress`** — Library, Reviews, Lists, Friends tiles are all tappable but do nothing. Each should navigate to the corresponding filtered view.
+- [ ] **"Library →" link in Now Playing has no handler** — should navigate to the Library/Discover tab.
+- [ ] **Now Playing uses hardcoded game 'lumen'** — should load from actual user library API.
+- [ ] **"↑" / share button removed** — left placeholder spacer only. Consider wiring a share-profile action here later.
+
+---
+
+## 🟠 Library Screen (`src/screens/library/LibraryScreen.tsx`)
+
+- [ ] **All data is hardcoded** — game IDs ('stardust', 'neon', 'lumen'), progress values, session dates, tab counts (3, 14, 142, 48). Should load from the user's real library entries via API.
+- [ ] **Playing rows have no `onPress`** — tapping a game row should navigate to `/games/[id]`.
+- [ ] **Grid/layout toggle buttons have no `onPress`** — the two icon buttons in the header (⊞ ◎) do nothing. Implement a layout toggle or remove them.
+- [ ] **Shelf tabs are decorative** — switching tabs (Wishlist, Finished, Reviews) does not change what's displayed. Each tab should filter the list.
+- [ ] **Streak card is hardcoded** — "14h 32m · 5 day streak", "+3h vs last week" are mock values. Needs real play-session tracking or remove the card for now.
+
+---
+
+## 🟠 Today / Home Screen (`src/screens/today/TodayScreen.tsx`)
+
+- [ ] **Date and greeting are hardcoded** — "Wednesday, May 20" and "Hey, Maya." should use `new Date()` and the real user's display name.
+- [ ] **Header ◎ button has no `onPress`** — remove or wire to notifications/search.
+- [ ] **"+ Library" button has no `onPress`** — tapping "Add to Library" on the Today Pick should call the library-add API.
+- [ ] **Editorial quote is hardcoded** — static placeholder text. Either pull from a real editorial API or remove the section.
+- [ ] **"See all" / section right-links have no navigation** — three section labels show link text but `SectionLabel` never receives a press handler. Pass an `onPress` prop or replace with a `TouchableOpacity` wrapper.
+- [ ] **All games are hardcoded mock data** — 'lumen', 'stardust', 'neon', 'cobalt', 'hollow' from the local GAMES object. Should load from the real games API.
+- [ ] **Friend activity rows are hardcoded** — Theo, Kira, Jules are fictional. Should load from the following feed or remove the section.
+
+---
+
+## 🟠 Community Screen (`src/screens/notifications` / CommunityScreen)
+
+- [ ] **Composer "+" button has no `onPress`** — should navigate to CreateScreen or open a bottom sheet.
+- [ ] **Group cards have no `onPress`** — tapping a group does nothing. Needs a group detail screen or navigates to a filtered feed.
+- [ ] **Thread rows have no `onPress`** — tapping a discussion thread does nothing. Needs a thread detail screen.
+- [ ] **All groups are hardcoded** — Cozy Players, Soulslike, etc. are static mock data. Should load from a groups API or Supabase table.
+- [ ] **All threads are hardcoded** — static discussion items with fake reply/like counts.
+- [ ] **Header stats are hardcoded** — "47 posts today · 18.4k active" are not real numbers.
+
+---
+
+## 🟡 Discover Screen (`src/screens/discover/DiscoverScreen.tsx`)
+
+- [x] **Dark theme** — converted from light (#FAFAFA) to TL dark theme ✅
+- [x] **Duplicate key crash in news FlatList** — fixed, now uses `item.url` as key ✅
+- [ ] **NewsCard has no `onPress`** — tapping a news article should open the article URL (`Linking.openURL(article.url)`).
+- [ ] **GameCard "See all" section links** — "All Games", "Trending Games", "New Releases" section headers have no "See all" navigation.
+
+---
+
+## 🟡 Search Screen (`src/app/search.tsx`)
+
+- [ ] **User search returns nothing** — the search query initialises `users: []` and never fetches users. If user search is intended, wire it to `/api/users?search=`.
+- [ ] **Tapping a user result** — check whether the user result row navigates to the user profile; if not, add `router.push('/users/' + user.id)`.
+
+---
+
+## 🟡 Settings Screen (`src/app/settings.tsx`)
+
+- [ ] Appears fully functional (edit profile, avatar upload, change password, sign out). **Confirm sign-out redirects to `/login` after calling `supabase.auth.signOut()`** — verify the auth listener in `_layout.tsx` handles this.
+
+---
+
+## 🟡 Dead/Leftover Files
+
+- [ ] **`src/app/explore.tsx`** — contains the Expo starter template boilerplate (file-based routing docs, collapsible sections, animated images). This is not a real app screen. Either repurpose it or delete it.
+
+---
+
+## 💡 Suggested Improvements
+
+### Navigation
+- Add a **Floating Action Button (FAB)** on the feed/home tab for creating posts — far more discoverable than a hidden tab.
+- Add a **back-to-top** button on long scrolling lists (Library, Discover).
+
+### Profile
+- Make the profile screen **context-aware**: show Follow/Message buttons only when viewing _another_ user's profile; show Edit Profile when viewing your own.
+- Load avatar from Supabase Storage `avatarUrl` instead of initials.
+
+### Library
+- Real **game status tracking** (Playing / Wishlist / Finished / Dropped) per user — this is the core differentiator of the app.
+- **Progress tracking** (% complete, hours played) tied to play sessions.
+
+### Community / Social
+- **Real notifications** screen distinct from the Community tab — unread badge on the tab icon.
+- In-app **deep links** from notification items to the relevant post/review.
+
+### Games
+- **"Write a Review" CTA** on the game detail screen should be more prominent.
+- **Related games** section on game detail (same genre, from the existing `/api/games?genre=` endpoint).
+
+### General Polish
+- Replace all hardcoded dates with `new Date().toLocaleDateString()`.
+- Replace all hardcoded user names with data from `useAuth()`.
+- Add **skeleton loaders** on screens that are still showing mock data (Library, Today, Profile stats).
+- All `TouchableOpacity` wrappers should have `activeOpacity={0.7}` for consistent press feedback.

@@ -20,7 +20,7 @@ import { GamerIllustration } from '@/components/gamer-illustration'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
-import { Colors } from '@/constants/theme'
+import { TL } from '@/constants/tl-theme'
 import type { MutationResponse } from '@/types'
 
 export default function OnboardingSetupScreen() {
@@ -105,8 +105,8 @@ export default function OnboardingSetupScreen() {
             <GamerIllustration size={48} />
           </View>
 
-          <Typography variant="h2">set up your profile.</Typography>
-          <Typography variant="body" muted style={styles.subtitle}>
+          <Typography variant="h2" style={{ color: TL.ink }}>set up your profile.</Typography>
+          <Typography variant="body" muted style={[styles.subtitle, { color: TL.muted }]}>
             This is how the community will see you.
           </Typography>
 
@@ -123,6 +123,7 @@ export default function OnboardingSetupScreen() {
 
           <View style={styles.inputs}>
             <Input
+              dark
               label="Display name"
               value={displayName}
               onChangeText={setDisplayName}
@@ -131,6 +132,7 @@ export default function OnboardingSetupScreen() {
               error={errors.displayName}
             />
             <Input
+              dark
               label="Username"
               value={username}
               onChangeText={(t) => setUsername(t.toLowerCase())}
@@ -151,7 +153,7 @@ export default function OnboardingSetupScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.surface },
+  safe: { flex: 1, backgroundColor: TL.bg },
   kav: { flex: 1 },
   scroll: { flexGrow: 1, paddingHorizontal: 24 },
   logoRow: { alignItems: 'flex-end', paddingTop: 16, paddingBottom: 28 },
@@ -162,12 +164,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: Colors.primary,
+    backgroundColor: TL.amber,
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  avatarBadgeText: { color: Colors.text, fontWeight: '700' },
+  avatarBadgeText: { color: TL.bg, fontWeight: '700' },
   inputs: { gap: 14 },
   ctaWrap: { marginTop: 28, paddingBottom: 16 },
 })

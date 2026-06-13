@@ -6,6 +6,7 @@ import { PostCard } from '@/modules/feed'
 import { CommentItem } from '@/modules/posts'
 import type { Post, Comment, ApiResponse, MutationResponse } from '@/types'
 import { useState } from 'react'
+import { useRealtimePost } from '@/hooks/use-realtime-post'
 
 interface PostWithComments extends Post {
   comments: Comment[]
@@ -35,6 +36,8 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId),
   })
+
+  useRealtimePost(postId)
 
   async function handleComment() {
     if (!commentText.trim() || submitting) return

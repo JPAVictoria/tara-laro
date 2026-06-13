@@ -37,9 +37,10 @@ export function useAuth() {
     setOnboardingComplete(done ?? false)
   }
 
-  async function signUpWithEmail(email: string, password: string) {
-    const { error } = await supabase.auth.signUp({ email, password })
+  async function signUpWithEmail(email: string, password: string): Promise<boolean> {
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
+    return !!data.session
   }
 
   async function signInWithOAuth(provider: 'google' | 'discord') {

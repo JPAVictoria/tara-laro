@@ -7,7 +7,6 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
   Text,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -24,7 +23,6 @@ export function RegisterScreen() {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [redirecting, setRedirecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { signUpWithEmail, signInWithOAuth } = useAuth()
   const router = useRouter()
@@ -38,8 +36,17 @@ export function RegisterScreen() {
     setError(null)
     setSubmitting(true)
     try {
-      await signUpWithEmail(email.trim(), password)
-      setRedirecting(true)
+      const hasSession = await signUpWithEmail(email.trim(), password)
+      if (hasSession) {
+        router.replace('/onboarding/setup')
+      } else {
+        setSubmitting(false)
+        Alert.alert(
+          'Check your email',
+          'We sent a confirmation link to ' + email.trim() + '. Click it to finish creating your account.',
+          [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }],
+        )
+      }
     } catch (e) {
       setError((e as Error).message)
       setSubmitting(false)
@@ -140,14 +147,6 @@ export function RegisterScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* ── Redirect splash overlay ── */}
-      {redirecting && (
-        <View style={styles.overlay} pointerEvents="box-only">
-          <GamerIllustration size={110} />
-          <Text style={styles.overlayWordmark}>TaraLaro</Text>
-          <ActivityIndicator color={TL.amber} size="large" style={styles.overlaySpinner} />
-        </View>
-      )}
     </SafeAreaView>
   )
 }
@@ -186,13 +185,5 @@ const styles = StyleSheet.create({
   footerMuted: { fontSize: 13, color: TL.muted },
   link: { fontSize: 13, color: TL.amber, fontWeight: '700' },
 
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: TL.bg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 99,
-  },
-  overlayWordmark: { fontSize: 32, fontWeight: '900', color: TL.ink, letterSpacing: -1, marginTop: 12 },
-  overlaySpinner: { marginTop: 32 },
+
 })

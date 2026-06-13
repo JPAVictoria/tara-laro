@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text } from 'react-native'
+import { Image } from 'expo-image'
 import Svg, {
   Defs,
   LinearGradient,
@@ -468,12 +469,14 @@ const COVER_MAP: Record<
 
 export function GameCover({
   id,
+  coverUrl,
   w = 120,
   h = 160,
   radius = TL.radiusSm,
   flat = false,
 }: {
   id: string
+  coverUrl?: string | null
   w?: number | string
   h?: number | string
   radius?: number
@@ -483,24 +486,33 @@ export function GameCover({
   const numH = typeof h === 'string' ? 0 : h
   const small = numW < 70
 
+  const sharedStyle = {
+    width: w as `${number}%` | number,
+    height: numH || 180,
+    borderRadius: flat ? 0 : radius,
+    overflow: 'hidden' as const,
+  }
+
+  if (coverUrl) {
+    return (
+      <Image
+        source={{ uri: coverUrl }}
+        style={sharedStyle}
+        contentFit="cover"
+        placeholder={{ blurhash: 'LGF5?xYk^6#M@-5c,1J5@[or[Q6.' }}
+        transition={200}
+      />
+    )
+  }
+
   const CoverRenderer = COVER_MAP[id]
 
   if (typeof w === 'string' || typeof h === 'string') {
-    // For percentage widths, use a flex container
     return (
-      <View
-        style={{
-          width: w as `${number}%` | number,
-          height: numH || 180,
-          borderRadius: flat ? 0 : radius,
-          overflow: 'hidden',
-          backgroundColor: TL.surface2,
-        }}
-      >
+      <View style={{ ...sharedStyle, backgroundColor: TL.surface2 }}>
         <View style={{ flex: 1, position: 'relative' }}>
           {CoverRenderer ? (
             <View style={{ flex: 1 }}>
-              {/* Stretch SVG to fill */}
               <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
                 <CoverRenderer w={300} h={numH || 180} small={false} />
               </View>

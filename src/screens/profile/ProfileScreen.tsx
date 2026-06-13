@@ -5,10 +5,12 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { useQuery } from '@tanstack/react-query'
 import { TL } from '@/constants/tl-theme'
 import {
   SectionLabel,
@@ -19,17 +21,20 @@ import {
   GAMES,
 } from '@/components/tl-shared'
 import { GameCover } from '@/components/game/GameCover'
+import { useAuth } from '@/modules/auth/hooks/use-auth'
+import { useApiClient } from '@/hooks/use-api-client'
+import type { User } from '@/types'
 
 // ─── Profile avatar ──────────────────────────────────────────────────────────
 
-function ProfileAvatar() {
+function ProfileAvatar({ initials }: { initials: string }) {
   return (
     <View style={styles.avatarWrap}>
       <View style={styles.avatarCircle}>
-        <Text style={styles.avatarInitials}>MR</Text>
+        <Text style={styles.avatarInitials}>{initials}</Text>
       </View>
       <View style={styles.levelBadge}>
-        <Text style={styles.levelBadgeText}>LVL 12</Text>
+        <Text style={styles.levelBadgeText}>LVL 1</Text>
       </View>
     </View>
   )
@@ -37,21 +42,34 @@ function ProfileAvatar() {
 
 // ─── Identity block ──────────────────────────────────────────────────────────
 
-function IdentityBlock() {
+function IdentityBlock({ profile }: { profile: User | null }) {
+  const router = useRouter()
+  const initials = profile
+    ? profile.displayName
+        .split(' ')
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '?'
+
   return (
     <View style={styles.identityBlock}>
-      <ProfileAvatar />
-      <Text style={styles.displayName}>Maya Reyes</Text>
-      <Text style={styles.handle}>@mayareyes · Manila, PH · joined 2023</Text>
-      <Text style={styles.bio}>
-        Collecting cozy games and strong opinions. Usually overleveled, always underslept. 🌙
+      <ProfileAvatar initials={initials} />
+      <Text style={styles.displayName}>{profile?.displayName ?? '—'}</Text>
+      <Text style={styles.handle}>
+        @{profile?.username ?? '…'}
       </Text>
+      {profile?.bio ? (
+        <Text style={styles.bio}>{profile.bio}</Text>
+      ) : null}
       <View style={styles.identityActions}>
-        <TouchableOpacity style={[amberBtn, { flex: 1 }]}>
-          <Text style={amberBtnText}>Follow</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.outlineBtn, { flex: 1 }]}>
-          <Text style={styles.outlineBtnText}>Message</Text>
+        <TouchableOpacity
+          style={[amberBtn, { flex: 1 }]}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+        >
+          <Text style={amberBtnText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -60,7 +78,7 @@ function IdentityBlock() {
 
 // ─── Stats row ────────────────────────────────────────────────────────────────
 
-function StatItem({ value, label }: { value: string; label: string }) {
+function StatItem({ value, label }: { value: string | number; label: string }) {
   return (
     <View style={styles.statItem}>
       <Text style={styles.statValue}>{value}</Text>
@@ -69,16 +87,14 @@ function StatItem({ value, label }: { value: string; label: string }) {
   )
 }
 
-function StatsRow() {
+function StatsRow({ profile }: { profile: User | null }) {
   return (
     <View style={[tlCard, styles.statsRow]}>
-      <StatItem value="247" label="Games" />
+      <StatItem value={profile?.postsCount ?? 0} label="Posts" />
       <View style={styles.statDivider} />
-      <StatItem value="48" label="Reviews" />
+      <StatItem value={profile?.followersCount ?? 0} label="Followers" />
       <View style={styles.statDivider} />
-      <StatItem value="12" label="Lists" />
-      <View style={styles.statDivider} />
-      <StatItem value="1.2k" label="Followers" />
+      <StatItem value={profile?.followingCount ?? 0} label="Following" />
     </View>
   )
 }
@@ -91,15 +107,21 @@ function EntryTile({
   count,
   badge,
   accent,
+  onPress,
 }: {
   icon: string
   label: string
   count: string
   badge?: string
   accent?: boolean
+  onPress?: () => void
 }) {
   return (
-    <TouchableOpacity style={[styles.entryTile, accent && styles.entryTileAccent]}>
+    <TouchableOpacity
+      style={[styles.entryTile, accent && styles.entryTileAccent]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
       <Text style={styles.entryTileIcon}>{icon}</Text>
       <Text style={styles.entryTileLabel}>{label}</Text>
       <Text style={[styles.entryTileCount, accent && styles.entryTileCountAccent]}>{count}</Text>
@@ -112,40 +134,61 @@ function EntryTile({
   )
 }
 
-function EntryTiles() {
+function EntryTiles({ profile }: { profile: User | null }) {
+  const router = useRouter()
   return (
     <View style={styles.entryGrid}>
-      <EntryTile icon="📚" label="Library" count="247 games" />
-      <EntryTile icon="✍️" label="Reviews" count="48 written" />
-      <EntryTile icon="📋" label="Lists" count="12 curated" />
-      <EntryTile icon="👥" label="Friends" count="1.2k" badge="8 new" accent />
+      <EntryTile
+        icon="📚"
+        label="Library"
+        count="0 games"
+        onPress={() => router.push('/discover')}
+      />
+      <EntryTile
+        icon="✍️"
+        label="Posts"
+        count={`${profile?.postsCount ?? 0} written`}
+        onPress={() => router.push('/discover')}
+      />
+      <EntryTile
+        icon="📋"
+        label="Lists"
+        count="0 curated"
+        onPress={() => Alert.alert('Coming soon', 'Lists are not available yet.')}
+      />
+      <EntryTile
+        icon="👥"
+        label="Following"
+        count={String(profile?.followingCount ?? 0)}
+        accent
+        onPress={() => Alert.alert('Coming soon', 'Following feed is not available yet.')}
+      />
     </View>
   )
 }
 
 // ─── Now Playing ─────────────────────────────────────────────────────────────
 
-function NowPlayingRow() {
+function NowPlaying() {
+  const router = useRouter()
   const game = GAMES['lumen']
   if (!game) return null
   return (
-    <View style={[tlCard, styles.nowPlayingCard]}>
-      <GameCover id="lumen" w={56} h={72} />
-      <View style={styles.nowPlayingInfo}>
-        <Text style={styles.nowPlayingTitle}>{game.title}</Text>
-        <Text style={styles.nowPlayingStudio}>{game.studio}</Text>
-        <Text style={styles.nowPlayingGenre}>{game.genre}</Text>
-        <ScoreBadge value={game.score} />
-      </View>
-    </View>
-  )
-}
-
-function NowPlaying() {
-  return (
     <View style={styles.section}>
-      <SectionLabel kicker="NOW PLAYING" rightLink="Library →" />
-      <NowPlayingRow />
+      <SectionLabel
+        kicker="NOW PLAYING"
+        rightLink="Library →"
+        onPress={() => router.push('/discover')}
+      />
+      <View style={[tlCard, styles.nowPlayingCard]}>
+        <GameCover id="lumen" w={56} h={72} />
+        <View style={styles.nowPlayingInfo}>
+          <Text style={styles.nowPlayingTitle}>{game.title}</Text>
+          <Text style={styles.nowPlayingStudio}>{game.studio}</Text>
+          <Text style={styles.nowPlayingGenre}>{game.genre}</Text>
+          <ScoreBadge value={game.score} />
+        </View>
+      </View>
     </View>
   )
 }
@@ -157,7 +200,11 @@ function TopNav() {
   return (
     <View style={styles.topNav}>
       <View style={{ width: 36 }} />
-      <TouchableOpacity style={styles.topNavBtn} onPress={() => router.push('/settings')}>
+      <TouchableOpacity
+        style={styles.topNavBtn}
+        onPress={() => router.push('/settings')}
+        activeOpacity={0.7}
+      >
         <FontAwesome5 name="cog" size={16} color={TL.muted} />
       </TouchableOpacity>
     </View>
@@ -167,6 +214,16 @@ function TopNav() {
 // ─── ProfileScreen ───────────────────────────────────────────────────────────
 
 export function ProfileScreen() {
+  const { user: authUser } = useAuth()
+  const apiClient = useApiClient()
+
+  const { data: profileRes } = useQuery({
+    queryKey: ['me'],
+    queryFn: () => apiClient.get<{ data: User | null }>('/api/users/me'),
+    enabled: !!authUser,
+  })
+  const profile = profileRes?.data ?? null
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView
@@ -175,10 +232,10 @@ export function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <TopNav />
-        <IdentityBlock />
-        <StatsRow />
+        <IdentityBlock profile={profile} />
+        <StatsRow profile={profile} />
         <View style={styles.section}>
-          <EntryTiles />
+          <EntryTiles profile={profile} />
         </View>
         <NowPlaying />
       </ScrollView>
@@ -216,11 +273,6 @@ const styles = StyleSheet.create({
     backgroundColor: TL.surface,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  topNavBtnText: {
-    fontSize: 16,
-    color: TL.muted,
-    fontWeight: '700',
   },
 
   // Identity
@@ -288,19 +340,6 @@ const styles = StyleSheet.create({
     gap: 10,
     width: '100%',
     marginTop: 6,
-  },
-  outlineBtn: {
-    height: 36,
-    borderRadius: 999,
-    borderWidth: 1.5,
-    borderColor: TL.borderStrong,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  outlineBtnText: {
-    color: TL.ink,
-    fontWeight: '700',
-    fontSize: 13,
   },
 
   // Stats row

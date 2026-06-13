@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { TL } from '@/constants/tl-theme'
 import {
   Avatar,
@@ -24,7 +25,7 @@ import { GameCover } from '@/components/game/GameCover'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useGames } from '@/modules/games'
 import { useApiClient } from '@/hooks/use-api-client'
-import type { Post, PaginatedResponse } from '@/types'
+import type { Post, PaginatedResponse, UserGame, MutationResponse } from '@/types'
 
 // ─── TodayHeader ───────────────────────────────────────────────────────────
 
@@ -67,6 +68,28 @@ function TodayHeader() {
 function TodayPick() {
   const { games, isLoading } = useGames()
   const game = games[0] ?? null
+  const { user: authUser } = useAuth()
+  const apiClient = useApiClient()
+  const queryClient = useQueryClient()
+  const [adding, setAdding] = useState(false)
+  const [added, setAdded] = useState(false)
+
+  async function handleAddToLibrary() {
+    if (!game || adding || added || !authUser) return
+    setAdding(true)
+    try {
+      await apiClient.post<MutationResponse<UserGame>>('/api/library', {
+        gameId: game.id,
+        status: 'playing',
+      })
+      await queryClient.invalidateQueries({ queryKey: ['library'] })
+      setAdded(true)
+    } catch {
+      Alert.alert('Error', 'Could not add to library. Try again.')
+    } finally {
+      setAdding(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -99,11 +122,14 @@ function TodayPick() {
             </View>
           </View>
           <TouchableOpacity
-            style={amberBtn}
-            onPress={() => {}}
+            style={[amberBtn, (adding || added) && { opacity: 0.7 }]}
+            onPress={handleAddToLibrary}
             activeOpacity={0.7}
+            disabled={adding || added}
           >
-            <Text style={amberBtnText}>+ Library</Text>
+            <Text style={amberBtnText}>
+              {adding ? '…' : added ? '✓ Added' : '+ Library'}
+            </Text>
           </TouchableOpacity>
         </View>
 

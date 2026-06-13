@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { TL } from '@/constants/tl-theme'
 
 // ─── Avatar ────────────────────────────────────────────────────────────────
@@ -61,10 +61,12 @@ export function SectionLabel({
   kicker,
   subtitle,
   rightLink,
+  onPress,
 }: {
   kicker: string
   subtitle?: string
   rightLink?: string
+  onPress?: () => void
 }) {
   return (
     <View
@@ -91,7 +93,13 @@ export function SectionLabel({
         )}
       </View>
       {rightLink && (
-        <Text style={{ fontSize: 12, fontWeight: '600', color: TL.muted }}>{rightLink}</Text>
+        onPress ? (
+          <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: TL.amber }}>{rightLink}</Text>
+          </TouchableOpacity>
+        ) : (
+          <Text style={{ fontSize: 12, fontWeight: '600', color: TL.muted }}>{rightLink}</Text>
+        )
       )}
     </View>
   )

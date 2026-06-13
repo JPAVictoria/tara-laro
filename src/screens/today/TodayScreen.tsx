@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
 import { TL } from '@/constants/tl-theme'
 import {
   Avatar,
@@ -19,21 +20,39 @@ import {
   GAMES,
 } from '@/components/tl-shared'
 import { GameCover } from '@/components/game/GameCover'
+import { useAuth } from '@/modules/auth/hooks/use-auth'
 
 // ─── TodayHeader ───────────────────────────────────────────────────────────
 
 function TodayHeader() {
+  const { user } = useAuth()
+  const router = useRouter()
+  const today = new Date()
+  const dateStr = today.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  })
+  const firstName =
+    (user?.user_metadata?.full_name as string | undefined)?.split(' ')[0] ??
+    user?.email?.split('@')[0] ??
+    'there'
+
   return (
     <View style={styles.headerRow}>
       <View>
-        <Text style={styles.headerDate}>Wednesday, May 20</Text>
-        <Text style={styles.headerGreeting}>Hey, Maya.</Text>
+        <Text style={styles.headerDate}>{dateStr}</Text>
+        <Text style={styles.headerGreeting}>Hey, {firstName}.</Text>
       </View>
       <View style={styles.headerActions}>
-        <TouchableOpacity style={styles.iconBtn}>
+        <TouchableOpacity
+          style={styles.iconBtn}
+          onPress={() => router.push('/search')}
+          activeOpacity={0.7}
+        >
           <Text style={{ fontSize: 18 }}>◎</Text>
         </TouchableOpacity>
-        <Avatar name="Maya R" size={38} ring />
+        <Avatar name={firstName} size={38} ring />
       </View>
     </View>
   )
@@ -65,7 +84,7 @@ function TodayPick() {
               <Text style={styles.pickStudio}>{game.studio}</Text>
             </View>
           </View>
-          <TouchableOpacity style={amberBtn}>
+          <TouchableOpacity style={amberBtn} activeOpacity={0.7}>
             <Text style={amberBtnText}>+ Library</Text>
           </TouchableOpacity>
         </View>
@@ -94,10 +113,15 @@ function ContinueRow({
   id: string
   playtime: string
 }) {
+  const router = useRouter()
   const game = GAMES[id]
   if (!game) return null
   return (
-    <View style={styles.continueRow}>
+    <TouchableOpacity
+      style={styles.continueRow}
+      onPress={() => router.push(`/games/${id}`)}
+      activeOpacity={0.7}
+    >
       <GameCover id={id} w={48} h={62} />
       <View style={styles.continueInfo}>
         <Text style={styles.continueTitle} numberOfLines={1}>
@@ -107,17 +131,22 @@ function ContinueRow({
           <Text style={{ fontSize: 12 }}>⏰</Text> {playtime}
         </Text>
       </View>
-      <TouchableOpacity style={styles.playBtn}>
+      <TouchableOpacity style={styles.playBtn} activeOpacity={0.7}>
         <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>▶</Text>
       </TouchableOpacity>
-    </View>
+    </TouchableOpacity>
   )
 }
 
 function TodayContinue() {
+  const router = useRouter()
   return (
     <View style={styles.section}>
-      <SectionLabel kicker="PICK UP WHERE YOU LEFT OFF" rightLink="2 games" />
+      <SectionLabel
+        kicker="PICK UP WHERE YOU LEFT OFF"
+        rightLink="2 games"
+        onPress={() => router.push('/discover')}
+      />
       <View style={tlCard}>
         <View style={styles.cardInner}>
           <ContinueRow id="stardust" playtime="3h 22m played" />
@@ -160,9 +189,14 @@ function FriendRow({
 }
 
 function TodayFriends() {
+  const router = useRouter()
   return (
     <View style={styles.section}>
-      <SectionLabel kicker="FROM YOUR CIRCLE" rightLink="See all" />
+      <SectionLabel
+        kicker="FROM YOUR CIRCLE"
+        rightLink="See all"
+        onPress={() => router.push('/notifications')}
+      />
       <View style={tlCard}>
         <View style={styles.cardInner}>
           <FriendRow name="Theo" verb="finished" gameId="cobalt" stars={5} />
@@ -173,6 +207,21 @@ function TodayFriends() {
         </View>
       </View>
     </View>
+  )
+}
+
+// ─── Create FAB ────────────────────────────────────────────────────────────
+
+function CreateFAB() {
+  const router = useRouter()
+  return (
+    <TouchableOpacity
+      style={styles.fab}
+      onPress={() => router.push('/create')}
+      activeOpacity={0.8}
+    >
+      <Text style={styles.fabIcon}>+</Text>
+    </TouchableOpacity>
   )
 }
 
@@ -191,6 +240,7 @@ export function TodayScreen() {
         <TodayContinue />
         <TodayFriends />
       </ScrollView>
+      <CreateFAB />
     </SafeAreaView>
   )
 }
@@ -373,5 +423,29 @@ const styles = StyleSheet.create({
   friendGame: {
     color: TL.ink2,
     fontWeight: '600',
+  },
+
+  // FAB
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: TL.amber,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: TL.amber,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  fabIcon: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#fff',
+    lineHeight: 32,
   },
 })

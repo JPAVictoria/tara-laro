@@ -1,29 +1,38 @@
+import { memo, useCallback } from 'react'
 import { View, FlatList, StyleSheet, RefreshControl } from 'react-native'
 import { useRouter } from 'expo-router'
 import { FeedHeader, PostCard, useFeed } from '@/modules/feed'
 import { EmptyState } from '@/components/ui/EmptyState'
 import type { Post } from '@/types'
 
+const POST_ITEM_HEIGHT = 420
+
+const MemoPostCard = memo(PostCard)
+
 export function FeedScreen() {
   const { posts, isLoading, isRefreshing, hasMore, fetchNextPage, refresh } = useFeed()
   const router = useRouter()
 
-  function handlePostPress(post: Post) {
-    router.push(`/posts/${post.id}`)
-  }
+  const renderItem = useCallback(({ item }: { item: Post }) => (
+    <MemoPostCard post={item} onPress={() => router.push(`/posts/${item.id}`)} />
+  ), [router])
+
+  const keyExtractor = useCallback((item: Post) => item.id, [])
+
+  const getItemLayout = useCallback((_: unknown, index: number) => ({
+    length: POST_ITEM_HEIGHT,
+    offset: POST_ITEM_HEIGHT * index,
+    index,
+  }), [])
 
   return (
     <View style={styles.container}>
       <FeedHeader />
       <FlatList
         data={posts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PostCard
-            post={item}
-            onPress={() => handlePostPress(item)}
-          />
-        )}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        getItemLayout={getItemLayout}
         contentContainerStyle={posts.length === 0 ? styles.empty : styles.list}
         ListEmptyComponent={
           !isLoading ? (
@@ -45,6 +54,8 @@ export function FeedScreen() {
         onEndReached={hasMore ? fetchNextPage : undefined}
         onEndReachedThreshold={0.5}
         removeClippedSubviews
+        maxToRenderPerBatch={5}
+        windowSize={10}
       />
     </View>
   )

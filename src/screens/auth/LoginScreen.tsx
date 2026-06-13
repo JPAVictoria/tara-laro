@@ -38,6 +38,7 @@ export function LoginScreen() {
     try {
       await signInWithEmail(email.trim(), password)
       setRedirecting(true)
+      router.replace('/(tabs)')
     } catch (e) {
       setError((e as Error).message)
       setSubmitting(false)
@@ -57,6 +58,7 @@ export function LoginScreen() {
     try {
       await signInAsGuest()
       setRedirecting(true)
+      router.replace('/(tabs)')
     } catch (e) {
       Alert.alert('Error', (e as Error).message)
       setGuestLoading(false)

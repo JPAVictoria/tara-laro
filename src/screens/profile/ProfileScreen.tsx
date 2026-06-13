@@ -18,12 +18,11 @@ import {
   tlCard,
   amberBtn,
   amberBtnText,
-  GAMES,
 } from '@/components/tl-shared'
 import { GameCover } from '@/components/game/GameCover'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useApiClient } from '@/hooks/use-api-client'
-import type { User } from '@/types'
+import type { User, UserGame } from '@/types'
 
 // ─── Profile avatar ──────────────────────────────────────────────────────────
 
@@ -171,8 +170,18 @@ function EntryTiles({ profile }: { profile: User | null }) {
 
 function NowPlaying() {
   const router = useRouter()
-  const game = GAMES['lumen']
-  if (!game) return null
+  const { user: authUser } = useAuth()
+  const apiClient = useApiClient()
+
+  const { data } = useQuery({
+    queryKey: ['library', 'playing', 1],
+    queryFn: () => apiClient.get<{ data: UserGame[] }>('/api/library?status=playing&limit=1').then(r => r.data),
+    enabled: !!authUser,
+  })
+
+  const nowPlaying = data?.[0] ?? null
+  if (!nowPlaying) return null
+
   return (
     <View style={styles.section}>
       <SectionLabel
@@ -180,15 +189,18 @@ function NowPlaying() {
         rightLink="Library →"
         onPress={() => router.push('/discover')}
       />
-      <View style={[tlCard, styles.nowPlayingCard]}>
-        <GameCover id="lumen" w={56} h={72} />
+      <TouchableOpacity
+        style={[tlCard, styles.nowPlayingCard]}
+        onPress={() => router.push(`/games/${nowPlaying.gameId}`)}
+        activeOpacity={0.7}
+      >
+        <GameCover id={nowPlaying.gameId} coverUrl={nowPlaying.game.coverUrl} w={56} h={72} />
         <View style={styles.nowPlayingInfo}>
-          <Text style={styles.nowPlayingTitle}>{game.title}</Text>
-          <Text style={styles.nowPlayingStudio}>{game.studio}</Text>
-          <Text style={styles.nowPlayingGenre}>{game.genre}</Text>
-          <ScoreBadge value={game.score} />
+          <Text style={styles.nowPlayingTitle}>{nowPlaying.game.title}</Text>
+          <Text style={styles.nowPlayingGenre}>{nowPlaying.game.genre.slice(0, 2).join(' · ')}</Text>
+          <ScoreBadge value={Math.round(nowPlaying.game.avgRating * 10)} />
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   )
 }

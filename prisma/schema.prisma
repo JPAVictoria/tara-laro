@@ -22,23 +22,39 @@ model User {
   following     Follow[]       @relation("follower")
   followers     Follow[]       @relation("followee")
   notifications Notification[]
+  library       UserGame[]
   deleted       Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
 
 model Game {
-  id          String    @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   coverUrl    String?
   genre       String[]
   description String?
-  avgRating   Float     @default(0)
+  avgRating   Float      @default(0)
   releaseDate DateTime?
   posts       Post[]
   reviews     Review[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  library     UserGame[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model UserGame {
+  id        String   @id @default(cuid())
+  userId    String
+  gameId    String
+  status    String   @default("playing")
+  progress  Int      @default(0)
+  user      User     @relation(fields: [userId], references: [id])
+  game      Game     @relation(fields: [gameId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, gameId])
 }
 
 model Post {

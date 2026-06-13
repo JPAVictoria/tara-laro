@@ -57,6 +57,17 @@ export interface Review {
   createdAt: string
 }
 
+export interface UserGame {
+  id: string
+  userId: string
+  gameId: string
+  status: 'playing' | 'wishlist' | 'finished' | 'dropped'
+  progress: number
+  game: Game
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Follow {
   followerId: string
   followeeId: string

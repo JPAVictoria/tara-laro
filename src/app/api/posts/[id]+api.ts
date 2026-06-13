@@ -6,7 +6,10 @@ interface PostWithComments extends Post {
   comments: Comment[]
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ data: null, error: 'Missing post ID' }, { status: 400 })
+
   const user = await getRequestUser(request)
   if (!user) {
     return Response.json({ data: null, error: 'Unauthorized' }, { status: 401 })
@@ -15,7 +18,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
   const dbUser = await prisma.user.findUnique({ where: { supabaseId: user.id } })
 
   const post = await prisma.post.findUnique({
-    where: { id: params.id, deleted: false },
+    where: { id, deleted: false },
     include: {
       user: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
       game: { select: { id: true, title: true, coverUrl: true } },

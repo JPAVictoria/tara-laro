@@ -2,7 +2,10 @@ import { prisma } from '@/lib/prisma'
 import { getRequestUser } from '@/lib/supabase-server'
 import type { Comment, MutationResponse } from '@/types'
 
-export async function POST(request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function POST(request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ oldData: null, newData: null, error: 'Missing post ID' }, { status: 400 })
+
   const authUser = await getRequestUser(request)
   if (!authUser) {
     return Response.json({ oldData: null, newData: null, error: 'Unauthorized' }, { status: 401 })
@@ -13,7 +16,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     return Response.json({ oldData: null, newData: null, error: 'User not found' }, { status: 404 })
   }
 
-  const post = await prisma.post.findUnique({ where: { id: params.id, deleted: false } })
+  const post = await prisma.post.findUnique({ where: { id, deleted: false } })
   if (!post) {
     return Response.json({ oldData: null, newData: null, error: 'Post not found' }, { status: 404 })
   }
@@ -25,10 +28,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
   const [comment] = await prisma.$transaction([
     prisma.comment.create({
-      data: { postId: params.id, userId: dbUser.id, content: content.trim() },
+      data: { postId: id, userId: dbUser.id, content: content.trim() },
       include: { user: { select: { id: true, username: true, avatarUrl: true } } },
     }),
-    prisma.post.update({ where: { id: params.id }, data: { commentsCount: { increment: 1 } } }),
+    prisma.post.update({ where: { id }, data: { commentsCount: { increment: 1 } } }),
   ])
 
   const result: Comment = {

@@ -25,9 +25,12 @@ function toUserShape(u: {
   }
 }
 
-export async function GET(_request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(_request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ data: null, error: 'Missing user ID' }, { status: 400 })
+
   const user = await prisma.user.findUnique({
-    where: { id: params.id, deleted: false },
+    where: { id, deleted: false },
     include: { _count: { select: { posts: { where: { deleted: false } }, followers: true, following: true } } },
   })
 
@@ -38,13 +41,16 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   return Response.json({ data: toUserShape(user), error: null } satisfies ApiResponse<User>)
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function PATCH(request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ oldData: null, newData: null, error: 'Missing user ID' }, { status: 400 })
+
   const authUser = await getRequestUser(request)
   if (!authUser) {
     return Response.json({ oldData: null, newData: null, error: 'Unauthorized' }, { status: 401 })
   }
 
-  const dbUser = await prisma.user.findUnique({ where: { id: params.id } })
+  const dbUser = await prisma.user.findUnique({ where: { id } })
   if (!dbUser || dbUser.supabaseId !== authUser.id) {
     return Response.json({ oldData: null, newData: null, error: 'Forbidden' }, { status: 403 })
   }
@@ -56,7 +62,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 
   const updated = await prisma.user.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       ...(displayName?.trim() ? { displayName: displayName.trim() } : {}),
       ...(bio !== undefined ? { bio: bio?.trim() ?? null } : {}),

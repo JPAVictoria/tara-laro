@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma'
 import type { Review, PaginatedResponse } from '@/types'
 
-export async function GET(request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ data: [], hasMore: false, nextCursor: null, error: 'Missing game ID' }, { status: 400 })
+
   const url = new URL(request.url)
   const sort = url.searchParams.get('sort') ?? 'newest'
   const cursor = url.searchParams.get('cursor') ?? undefined
@@ -12,7 +15,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     : [{ createdAt: 'desc' as const }]
 
   const reviews = await prisma.review.findMany({
-    where: { gameId: params.id, deleted: false },
+    where: { gameId: id, deleted: false },
     include: {
       user: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
       game: { select: { id: true, title: true } },

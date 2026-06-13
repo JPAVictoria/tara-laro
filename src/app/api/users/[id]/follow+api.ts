@@ -8,7 +8,10 @@ interface FollowResult {
   following: boolean
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function POST(request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) return Response.json({ oldData: null, newData: null, error: 'Missing user ID' }, { status: 400 })
+
   const authUser = await getRequestUser(request)
   if (!authUser) {
     return Response.json({ oldData: null, newData: null, error: 'Unauthorized' }, { status: 401 })
@@ -18,23 +21,23 @@ export async function POST(request: Request, { params }: { params: { id: string 
   if (!follower) {
     return Response.json({ oldData: null, newData: null, error: 'User not found' }, { status: 404 })
   }
-  if (follower.id === params.id) {
+  if (follower.id === id) {
     return Response.json({ oldData: null, newData: null, error: 'Cannot follow yourself' }, { status: 400 })
   }
 
   const existing = await prisma.follow.findUnique({
-    where: { followerId_followeeId: { followerId: follower.id, followeeId: params.id } },
+    where: { followerId_followeeId: { followerId: follower.id, followeeId: id } },
   })
 
   if (existing) {
     await prisma.follow.delete({
-      where: { followerId_followeeId: { followerId: follower.id, followeeId: params.id } },
+      where: { followerId_followeeId: { followerId: follower.id, followeeId: id } },
     })
-    const result: FollowResult = { followerId: follower.id, followeeId: params.id, following: false }
+    const result: FollowResult = { followerId: follower.id, followeeId: id, following: false }
     return Response.json({ oldData: { ...result, following: true }, newData: result, error: null } satisfies MutationResponse<FollowResult>)
   }
 
-  await prisma.follow.create({ data: { followerId: follower.id, followeeId: params.id } })
-  const result: FollowResult = { followerId: follower.id, followeeId: params.id, following: true }
+  await prisma.follow.create({ data: { followerId: follower.id, followeeId: id } })
+  const result: FollowResult = { followerId: follower.id, followeeId: id, following: true }
   return Response.json({ oldData: { ...result, following: false }, newData: result, error: null } satisfies MutationResponse<FollowResult>)
 }

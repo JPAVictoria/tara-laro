@@ -53,9 +53,9 @@
 
 ## 🟠 Community Screen (`src/screens/notifications` / CommunityScreen)
 
-- [ ] **Composer "+" button has no `onPress`** — should navigate to CreateScreen or open a bottom sheet.
-- [ ] **Group cards have no `onPress`** — tapping a group does nothing. Needs a group detail screen or navigates to a filtered feed.
-- [ ] **Thread rows have no `onPress`** — tapping a discussion thread does nothing. Needs a thread detail screen.
+- [x] **Composer "+" button has no `onPress`** — entire composer pill now navigates to `/create` ✅
+- [x] **Group cards have no `onPress`** — tapping a group shows a "coming soon" alert (no group detail screen yet) ✅
+- [x] **Thread rows have no `onPress`** — tapping a thread shows a "coming soon" alert (no thread detail screen yet) ✅
 - [ ] **All groups are hardcoded** — Cozy Players, Soulslike, etc. are static mock data. Should load from a groups API or Supabase table.
 - [ ] **All threads are hardcoded** — static discussion items with fake reply/like counts.
 - [ ] **Header stats are hardcoded** — "47 posts today · 18.4k active" are not real numbers.

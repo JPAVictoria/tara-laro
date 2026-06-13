@@ -7,6 +7,8 @@ import {
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { TL } from '@/constants/tl-theme'
 import {
   SectionLabel,
@@ -151,13 +153,12 @@ function NowPlaying() {
 // ─── Top nav ─────────────────────────────────────────────────────────────────
 
 function TopNav() {
+  const router = useRouter()
   return (
     <View style={styles.topNav}>
-      <TouchableOpacity style={styles.topNavBtn}>
-        <Text style={styles.topNavBtnText}>↑</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.topNavBtn}>
-        <Text style={styles.topNavBtnText}>···</Text>
+      <View style={{ width: 36 }} />
+      <TouchableOpacity style={styles.topNavBtn} onPress={() => router.push('/settings')}>
+        <FontAwesome5 name="cog" size={16} color={TL.muted} />
       </TouchableOpacity>
     </View>
   )

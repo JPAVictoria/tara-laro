@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
+import * as Linking from 'expo-linking'
+import * as WebBrowser from 'expo-web-browser'
 import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
 import { getItem, setItem, removeItem, StorageKeys } from '@/utils/storage'
@@ -41,11 +43,19 @@ export function useAuth() {
   }
 
   async function signInWithOAuth(provider: 'google' | 'discord') {
-    const { error } = await supabase.auth.signInWithOAuth({
+    const redirectTo = Linking.createURL('auth/callback')
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: 'tara-laro://auth/callback' },
+      options: { redirectTo, skipBrowserRedirect: true },
     })
     if (error) throw error
+    if (!data.url) throw new Error('No OAuth URL returned')
+
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo)
+    if (result.type === 'success') {
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(result.url)
+      if (exchangeError) throw exchangeError
+    }
   }
 
   async function signOut() {

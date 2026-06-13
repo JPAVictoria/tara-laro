@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/utils/api'
 import { ProfileHeader } from '@/modules/profile'
 import { PostGrid } from '@/modules/profile'
+import { TL } from '@/constants/tl-theme'
 import type { User, ApiResponse, PaginatedResponse, Post } from '@/types'
 
 async function fetchUserByUsername(username: string): Promise<User | null> {
@@ -44,7 +45,7 @@ export default function PublicProfileRoute() {
 
       {isLoading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#FACC15" />
+          <ActivityIndicator color={TL.amber} />
         </View>
       ) : !user ? (
         <View style={styles.center}>
@@ -61,21 +62,21 @@ export default function PublicProfileRoute() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FAFAFA' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
   backBtn: { padding: 4 },
-  backText: { fontSize: 22, color: '#111827' },
-  title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: '#111827' },
+  backText: { fontSize: 22, color: TL.ink },
+  title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: TL.ink },
   spacer: { width: 30 },
   scroll: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
-  notFound: { fontSize: 16, color: '#6B7280' },
+  notFound: { fontSize: 16, color: TL.muted },
 })

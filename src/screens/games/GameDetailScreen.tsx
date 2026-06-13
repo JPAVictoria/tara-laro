@@ -11,6 +11,7 @@ import { useRouter } from 'expo-router'
 import { useGame } from '@/modules/games'
 import { RatingStars } from '@/modules/games'
 import { ReviewCard } from '@/modules/reviews'
+import { TL } from '@/constants/tl-theme'
 
 interface GameDetailScreenProps {
   gameId: string
@@ -23,7 +24,7 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
   if (isLoading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator color="#FACC15" size="large" />
+        <ActivityIndicator color={TL.amber} size="large" />
       </View>
     )
   }
@@ -48,7 +49,9 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
             transition={300}
           />
         ) : (
-          <View style={styles.coverPlaceholder} />
+          <View style={styles.coverPlaceholder}>
+            <Text style={styles.coverPlaceholderText}>?</Text>
+          </View>
         )}
         <View style={styles.coverOverlay} />
       </View>
@@ -99,6 +102,7 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
         <TouchableOpacity
           style={styles.writeReviewBtn}
           onPress={() => router.push(`/games/${gameId}/write-review`)}
+          activeOpacity={0.7}
         >
           <Text style={styles.writeReviewText}>✍️ Write a Review</Text>
         </TouchableOpacity>
@@ -108,48 +112,57 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  scroll: { flex: 1, backgroundColor: '#FFFFFF' },
+  scroll: { flex: 1, backgroundColor: TL.bg },
   content: { paddingBottom: 80 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', padding: 40 },
-  notFound: { fontSize: 16, color: '#6B7280' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: TL.bg, padding: 40 },
+  notFound: { fontSize: 16, color: TL.muted },
   cover: { width: '100%', height: 260, position: 'relative' },
   coverImg: { width: '100%', height: 260 },
-  coverPlaceholder: { width: '100%', height: 260, backgroundColor: '#E5E7EB' },
+  coverPlaceholder: {
+    width: '100%',
+    height: 260,
+    backgroundColor: TL.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  coverPlaceholderText: { fontSize: 48, color: TL.muted },
   coverOverlay: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     height: 80,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: 'rgba(20,16,10,0.7)',
   },
   body: { padding: 16 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   titleBlock: { flex: 1 },
-  title: { fontSize: 24, fontWeight: '800', color: '#111827' },
-  releaseDate: { fontSize: 13, color: '#9CA3AF', marginTop: 2 },
+  title: { fontSize: 24, fontWeight: '800', color: TL.ink },
+  releaseDate: { fontSize: 13, color: TL.muted, marginTop: 2 },
   ratingBlock: { alignItems: 'center', gap: 4 },
-  ratingNumber: { fontSize: 22, fontWeight: '800', color: '#FACC15' },
+  ratingNumber: { fontSize: 22, fontWeight: '800', color: TL.amber },
   genreRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   genreBadge: {
-    backgroundColor: '#F3F4F6',
+    backgroundColor: TL.surface,
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: TL.border,
   },
-  genreBadgeText: { fontSize: 12, fontWeight: '600', color: '#374151' },
-  description: { fontSize: 14, color: '#4B5563', lineHeight: 22, marginTop: 14 },
-  divider: { height: StyleSheet.hairlineWidth, backgroundColor: '#E5E7EB', marginVertical: 20 },
+  genreBadgeText: { fontSize: 12, fontWeight: '600', color: TL.ink2 },
+  description: { fontSize: 14, color: TL.ink2, lineHeight: 22, marginTop: 14 },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: TL.border, marginVertical: 20 },
   reviewsHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  reviewsTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
-  seeAll: { fontSize: 14, color: '#CA8A04', fontWeight: '600' },
-  noReviews: { fontSize: 14, color: '#9CA3AF', textAlign: 'center', paddingVertical: 16 },
+  reviewsTitle: { fontSize: 18, fontWeight: '700', color: TL.ink },
+  seeAll: { fontSize: 14, color: TL.amber, fontWeight: '600' },
+  noReviews: { fontSize: 14, color: TL.muted, textAlign: 'center', paddingVertical: 16 },
   writeReviewBtn: {
     marginTop: 16,
-    backgroundColor: '#FACC15',
-    borderRadius: 12,
+    backgroundColor: TL.amber,
+    borderRadius: TL.radius,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  writeReviewText: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  writeReviewText: { fontSize: 16, fontWeight: '700', color: TL.bg },
 })

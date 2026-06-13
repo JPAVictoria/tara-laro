@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { Image } from 'expo-image'
 import * as WebBrowser from 'expo-web-browser'
+import { TL } from '@/constants/tl-theme'
 import type { NewsArticle } from '@/types'
 import { formatRelativeTime, truncate } from '@/utils/format'
 
@@ -38,11 +39,11 @@ export function NewsCard({ article, onPress }: NewsCardProps) {
 }
 
 const styles = StyleSheet.create({
-  card: { width: 240, marginRight: 12, backgroundColor: '#FFFFFF', borderRadius: 12, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: '#E5E7EB' },
+  card: { width: 240, marginRight: 12, backgroundColor: TL.surface, borderRadius: 12, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: TL.border },
   thumbnail: { width: '100%', height: 130 },
-  thumbnailPlaceholder: { width: '100%', height: 130, backgroundColor: '#E5E7EB' },
+  thumbnailPlaceholder: { width: '100%', height: 130, backgroundColor: TL.surface2 },
   body: { padding: 12 },
-  source: { fontSize: 11, fontWeight: '600', color: '#CA8A04', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
-  title: { fontSize: 13, fontWeight: '600', color: '#111827', lineHeight: 18 },
-  time: { fontSize: 11, color: '#9CA3AF', marginTop: 6 },
+  source: { fontSize: 11, fontWeight: '600', color: TL.amber, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 },
+  title: { fontSize: 13, fontWeight: '600', color: TL.ink, lineHeight: 18 },
+  time: { fontSize: 11, color: TL.muted, marginTop: 6 },
 })

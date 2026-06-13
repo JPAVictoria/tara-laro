@@ -1,9 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import {
   View,
   Text,
   TextInput,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   SectionList,
@@ -13,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/utils/api'
+import { TL } from '@/constants/tl-theme'
 import type { Game, User, Post, PaginatedResponse } from '@/types'
 
 interface SearchResults {
@@ -59,7 +59,7 @@ export default function SearchScreen() {
           <TextInput
             style={styles.input}
             placeholder="Search games, posts, players…"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={TL.faint}
             value={query}
             onChangeText={setQuery}
             autoFocus
@@ -79,7 +79,7 @@ export default function SearchScreen() {
 
       {isLoading && query.length >= 2 ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#FACC15" />
+          <ActivityIndicator color={TL.amber} />
         </View>
       ) : query.length < 2 ? (
         <View style={styles.center}>
@@ -105,6 +105,7 @@ export default function SearchScreen() {
                 <TouchableOpacity
                   style={styles.row}
                   onPress={() => router.push(`/games/${game.id}`)}
+                  activeOpacity={0.7}
                 >
                   <View style={styles.rowIcon}><Text style={styles.rowIconText}>🎮</Text></View>
                   <View style={styles.rowBody}>
@@ -121,6 +122,7 @@ export default function SearchScreen() {
                 <TouchableOpacity
                   style={styles.row}
                   onPress={() => router.push(`/users/${user.username}`)}
+                  activeOpacity={0.7}
                 >
                   <View style={styles.rowIcon}><Text style={styles.rowIconText}>👤</Text></View>
                   <View style={styles.rowBody}>
@@ -136,6 +138,7 @@ export default function SearchScreen() {
               <TouchableOpacity
                 style={styles.row}
                 onPress={() => router.push(`/posts/${post.id}`)}
+                activeOpacity={0.7}
               >
                 <View style={styles.rowIcon}><Text style={styles.rowIconText}>💬</Text></View>
                 <View style={styles.rowBody}>
@@ -153,56 +156,58 @@ export default function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FAFAFA' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F3F4F6',
+    backgroundColor: TL.surface2,
     borderRadius: 10,
     paddingHorizontal: 10,
     height: 40,
     gap: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: TL.borderStrong,
   },
   searchIcon: { fontSize: 15 },
-  input: { flex: 1, fontSize: 15, color: '#111827' },
-  clearBtn: { fontSize: 14, color: '#9CA3AF', padding: 2 },
-  cancelBtn: { fontSize: 15, color: '#FACC15', fontWeight: '600' },
+  input: { flex: 1, fontSize: 15, color: TL.ink },
+  clearBtn: { fontSize: 14, color: TL.faint, padding: 2 },
+  cancelBtn: { fontSize: 15, color: TL.amber, fontWeight: '600' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
-  hint: { fontSize: 14, color: '#9CA3AF', textAlign: 'center' },
+  hint: { fontSize: 14, color: TL.muted, textAlign: 'center' },
   sectionHeader: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: TL.bgTint,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
-  sectionTitle: { fontSize: 12, fontWeight: '700', color: '#6B7280', textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionTitle: { fontSize: 12, fontWeight: '700', color: TL.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: TL.border,
   },
-  rowIcon: { width: 40, height: 40, borderRadius: 8, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  rowIcon: { width: 40, height: 40, borderRadius: 8, backgroundColor: TL.surface2, alignItems: 'center', justifyContent: 'center' },
   rowIconText: { fontSize: 20 },
   rowBody: { flex: 1 },
-  rowTitle: { fontSize: 15, fontWeight: '600', color: '#111827' },
-  rowSub: { fontSize: 12, color: '#9CA3AF', marginTop: 2 },
-  rowRating: { fontSize: 13, color: '#CA8A04', fontWeight: '600' },
+  rowTitle: { fontSize: 15, fontWeight: '600', color: TL.ink },
+  rowSub: { fontSize: 12, color: TL.muted, marginTop: 2 },
+  rowRating: { fontSize: 13, color: TL.amber, fontWeight: '600' },
   listContent: { paddingBottom: 80 },
 })

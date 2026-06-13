@@ -19,12 +19,14 @@ export default function GameDetailRoute() {
   )
 }
 
+import { TL } from '@/constants/tl-theme'
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FFFFFF' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   header: {
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
   backBtn: { padding: 4 },
-  backText: { fontSize: 22, color: '#111827' },
+  backText: { fontSize: 22, color: TL.ink },
 })

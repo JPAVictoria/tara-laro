@@ -17,6 +17,7 @@ import { Image } from 'expo-image'
 import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
+import { TL } from '@/constants/tl-theme'
 import type { MutationResponse, User } from '@/types'
 
 export default function SettingsScreen() {
@@ -139,7 +140,7 @@ export default function SettingsScreen() {
             <TextInput
               style={styles.fieldInput}
               placeholder="Enter new display name"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={TL.faint}
               value={displayName}
               onChangeText={setDisplayName}
             />
@@ -150,7 +151,7 @@ export default function SettingsScreen() {
             <TextInput
               style={[styles.fieldInput, styles.bioInput]}
               placeholder="Tell us about yourself"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={TL.faint}
               value={bio}
               onChangeText={setBio}
               multiline
@@ -186,57 +187,57 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FAFAFA' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
-  backText: { fontSize: 22, color: '#111827', padding: 4 },
-  title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: '#111827' },
+  backText: { fontSize: 22, color: TL.ink, padding: 4 },
+  title: { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '700', color: TL.ink },
   spacer: { width: 30 },
   scroll: { flex: 1 },
   content: { padding: 16, paddingBottom: 80, gap: 12 },
-  sectionLabel: { fontSize: 11, fontWeight: '700', color: '#9CA3AF', letterSpacing: 0.8, marginTop: 8 },
+  sectionLabel: { fontSize: 11, fontWeight: '700', color: TL.muted, letterSpacing: 0.8, marginTop: 8 },
   avatarRow: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 8 },
   avatar: { width: 60, height: 60, borderRadius: 30 },
-  avatarPlaceholder: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  avatarPlaceholder: { width: 60, height: 60, borderRadius: 30, backgroundColor: TL.surface2, alignItems: 'center', justifyContent: 'center' },
   avatarPlaceholderText: { fontSize: 24 },
-  avatarLabel: { fontSize: 14, color: '#CA8A04', fontWeight: '600' },
+  avatarLabel: { fontSize: 14, color: TL.amber, fontWeight: '600' },
   field: { gap: 6 },
-  fieldLabel: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  fieldLabel: { fontSize: 13, fontWeight: '600', color: TL.ink2 },
   fieldInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: TL.borderStrong,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#111827',
+    color: TL.ink,
   },
   bioInput: { height: 80, textAlignVertical: 'top' },
-  saveBtn: { backgroundColor: '#FACC15', borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
+  saveBtn: { backgroundColor: TL.amber, borderRadius: TL.radius, paddingVertical: 14, alignItems: 'center' },
   saveBtnDisabled: { opacity: 0.5 },
-  saveBtnText: { fontSize: 15, fontWeight: '700', color: '#111827' },
-  divider: { height: StyleSheet.hairlineWidth, backgroundColor: '#E5E7EB', marginVertical: 8 },
+  saveBtnText: { fontSize: 15, fontWeight: '700', color: TL.bg },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: TL.border, marginVertical: 8 },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: TL.borderStrong,
   },
-  rowText: { fontSize: 15, color: '#111827' },
-  rowArrow: { fontSize: 16, color: '#9CA3AF' },
-  rowDanger: { borderColor: '#FCA5A5' },
+  rowText: { fontSize: 15, color: TL.ink },
+  rowArrow: { fontSize: 16, color: TL.muted },
+  rowDanger: { borderColor: 'rgba(239,68,68,0.3)' },
   rowDangerText: { fontSize: 15, color: '#EF4444', fontWeight: '600' },
 })

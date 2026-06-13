@@ -17,110 +17,73 @@ import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useApiClient } from '@/hooks/use-api-client'
 import type { Post, PaginatedResponse } from '@/types'
 
-// ─── Group data ─────────────────────────────────────────────────────────────
+// ─── Featured topics (genre filters) ────────────────────────────────────────
 
-const GROUPS = [
-  {
-    id: 'cozy',
-    name: 'Cozy Players',
-    emoji: '🌿',
-    members: '4.2k',
-    badge: '12 NEW',
-    gradStart: TL.amberSoft,
-    gradEnd: TL.amber,
-  },
-  {
-    id: 'soulslike',
-    name: 'Soulslike',
-    emoji: '⚔️',
-    members: '8.9k',
-    gradStart: '#0d1f3a',
-    gradEnd: '#1f4080',
-  },
-  {
-    id: 'jrpg',
-    name: 'JRPGs',
-    emoji: '⚡',
-    members: '6.1k',
-    gradStart: '#3a1f0d',
-    gradEnd: '#8a4010',
-  },
-  {
-    id: 'indie',
-    name: 'Indie Devs',
-    emoji: '🛠',
-    members: '2.3k',
-    gradStart: '#0d2a1a',
-    gradEnd: '#1a6030',
-  },
+const TOPICS = [
+  { id: 'cozy', name: 'Cozy Games', emoji: '🌿', genre: 'Simulation', bgColor: TL.amberSoft },
+  { id: 'soulslike', name: 'Souls-like', emoji: '⚔️', genre: 'Souls-like', bgColor: '#1f4080' },
+  { id: 'jrpg', name: 'JRPGs', emoji: '⚡', genre: 'JRPG', bgColor: '#8a4010' },
+  { id: 'indie', name: 'Indie', emoji: '🛠', genre: 'Indie', bgColor: '#1a6030' },
 ]
 
 
 // ─── CommunityHeader ─────────────────────────────────────────────────────────
 
 function CommunityHeader() {
+  const router = useRouter()
   return (
     <View style={styles.headerRow}>
       <View>
-        <Text style={styles.headerLabel}>47 posts today · 18.4k active</Text>
+        <Text style={styles.headerLabel}>Games · Reviews · Discussion</Text>
         <Text style={styles.headerTitle}>Community</Text>
       </View>
-      <TouchableOpacity style={styles.iconBtn}>
-        <Text style={styles.iconBtnText}>◎</Text>
+      <TouchableOpacity
+        style={styles.iconBtn}
+        onPress={() => router.push('/search')}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.iconBtnText}>🔍</Text>
       </TouchableOpacity>
     </View>
   )
 }
 
-// ─── Group card ──────────────────────────────────────────────────────────────
+// ─── Topic card ──────────────────────────────────────────────────────────────
 
-function GroupCard({
+function TopicCard({
   emoji,
   name,
-  members,
-  badge,
+  genre,
   bgColor,
 }: {
   emoji: string
   name: string
-  members: string
-  badge?: string
+  genre: string
   bgColor: string
 }) {
+  const router = useRouter()
   return (
     <TouchableOpacity
       style={[styles.groupCard, { backgroundColor: bgColor }]}
-      onPress={() => Alert.alert(name, 'Group detail coming soon.')}
+      onPress={() => router.push(`/discover?genre=${encodeURIComponent(genre)}`)}
       activeOpacity={0.7}
     >
-      {badge && (
-        <View style={styles.groupBadge}>
-          <Text style={styles.groupBadgeText}>{badge}</Text>
-        </View>
-      )}
       <Text style={styles.groupEmoji}>{emoji}</Text>
       <Text style={styles.groupName}>{name}</Text>
-      <Text style={styles.groupMembers}>{members} members</Text>
+      <Text style={styles.groupMembers}>Browse →</Text>
     </TouchableOpacity>
   )
 }
 
-// ─── Groups grid ────────────────────────────────────────────────────────────
+// ─── Topics grid ─────────────────────────────────────────────────────────────
 
-function GroupsGrid() {
+function TopicsGrid() {
   return (
     <View style={styles.section}>
-      <SectionLabel kicker="YOUR GROUPS" subtitle="Active circles" />
+      <SectionLabel kicker="BROWSE BY TOPIC" />
       <View style={styles.groupsGrid}>
-        {GROUPS.map((g) => (
-          <GroupCard
-            key={g.id}
-            emoji={g.emoji}
-            name={g.name}
-            members={g.members}
-            badge={g.badge}
-            bgColor={g.gradEnd}
-          />
+        {TOPICS.map((t) => (
+          <TopicCard key={t.id} emoji={t.emoji} name={t.name} genre={t.genre} bgColor={t.bgColor} />
         ))}
       </View>
     </View>
@@ -231,13 +194,18 @@ function TrendingSection() {
 
 function ComposerPill() {
   const router = useRouter()
+  const { user: authUser } = useAuth()
+  const displayName =
+    (authUser?.user_metadata?.full_name as string | undefined)?.split(' ')[0] ??
+    authUser?.email?.split('@')[0] ??
+    'You'
   return (
     <TouchableOpacity
       style={styles.composerPill}
       onPress={() => router.push('/create')}
       activeOpacity={0.7}
     >
-      <Avatar name="You" size={34} />
+      <Avatar name={displayName} size={34} />
       <Text style={styles.composerPlaceholder} numberOfLines={1}>
         What are you playing tonight?
       </Text>
@@ -260,7 +228,7 @@ export function CommunityScreen() {
       >
         <CommunityHeader />
         <ComposerPill />
-        <GroupsGrid />
+        <TopicsGrid />
         <TrendingSection />
       </ScrollView>
     </SafeAreaView>

@@ -21,11 +21,12 @@ const GENRES = ['All', 'RPG', 'Action', 'Indie', 'Roguelike', 'Simulation', 'Sou
 interface DiscoverScreenProps {
   games: Game[]
   isLoading: boolean
+  initialGenre?: string
 }
 
-export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
+export function DiscoverScreen({ games, isLoading, initialGenre }: DiscoverScreenProps) {
   const [search, setSearch] = useState('')
-  const [activeGenre, setActiveGenre] = useState('All')
+  const [activeGenre, setActiveGenre] = useState(initialGenre ?? 'All')
   const router = useRouter()
   const { articles } = useNews()
 

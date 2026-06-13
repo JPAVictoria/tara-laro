@@ -13,7 +13,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { TL } from '@/constants/tl-theme'
 import {
   Avatar,
-  Stars,
   SectionLabel,
   ScoreBadge,
   tlCard,
@@ -324,7 +323,6 @@ const styles = StyleSheet.create({
   hairline: { height: 1, backgroundColor: TL.border, marginHorizontal: 14 },
   cardInner: { paddingVertical: 4 },
 
-  pickLoadingCard: { height: 120, alignItems: 'center', justifyContent: 'center' },
   pickCard: { overflow: 'hidden' },
   pickCoverWrap: { width: '100%', height: 230, position: 'relative' },
   pickGradient: {

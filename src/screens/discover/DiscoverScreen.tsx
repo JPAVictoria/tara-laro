@@ -101,9 +101,24 @@ export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
               />
             </View>
           )}
-          <Section title="Trending Games" games={trending} onPress={(id) => router.push(`/games/${id}`)} />
-          <Section title="New Releases" games={newReleases} onPress={(id) => router.push(`/games/${id}`)} />
-          <Section title="All Games" games={games} onPress={(id) => router.push(`/games/${id}`)} />
+          <Section
+            title="Trending Games"
+            games={trending}
+            onPress={(id) => router.push(`/games/${id}`)}
+            onSeeAll={() => router.push('/search')}
+          />
+          <Section
+            title="New Releases"
+            games={newReleases}
+            onPress={(id) => router.push(`/games/${id}`)}
+            onSeeAll={() => router.push('/search')}
+          />
+          <Section
+            title="All Games"
+            games={games}
+            onPress={(id) => router.push(`/games/${id}`)}
+            onSeeAll={() => router.push('/search')}
+          />
         </ScrollView>
       ) : (
         <FlatList
@@ -130,14 +145,23 @@ function Section({
   title,
   games,
   onPress,
+  onSeeAll,
 }: {
   title: string
   games: Game[]
   onPress: (id: string) => void
+  onSeeAll?: () => void
 }) {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {onSeeAll && (
+          <TouchableOpacity onPress={onSeeAll} activeOpacity={0.7}>
+            <Text style={styles.seeAll}>See all</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       <FlatList
         horizontal
         data={games}
@@ -187,7 +211,9 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingBottom: 80 },
   section: { marginTop: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: TL.ink, paddingHorizontal: 16, marginBottom: 12 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '800', color: TL.ink },
+  seeAll: { fontSize: 13, fontWeight: '600', color: TL.amber },
   horizontalList: { paddingHorizontal: 16 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
   emptyText: { fontSize: 14, color: TL.muted },

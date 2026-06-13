@@ -1,28 +1,51 @@
 {
   "expo": {
-    "name": "tara-laro",
+    "name": "TaraLaro",
     "slug": "tara-laro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "taralaro",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
+    "primaryColor": "#FACC15",
+    "backgroundColor": "#14100A",
+    "description": "The gaming community app for the global gamer. Discover games, write reviews, follow gamers, and share your gaming journey.",
+    "platforms": ["ios", "android"],
     "ios": {
-      "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.anonymous.tara-laro"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.taralaro.app",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "TaraLaro uses your photo library to upload game screenshots and profile pictures.",
+        "NSCameraUsageDescription": "TaraLaro uses your camera to take profile photos."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.taralaro.app",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#FACC15",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "TaraLaro",
+      "shortName": "TaraLaro",
+      "description": "The gaming community app for the global gamer.",
+      "themeColor": "#FACC15",
+      "backgroundColor": "#14100A"
     },
     "plugins": [
       "expo-router",
@@ -30,6 +53,8 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#14100A",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
           "android": {
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
@@ -40,6 +65,11 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
     }
   }
 }

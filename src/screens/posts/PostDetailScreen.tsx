@@ -1,10 +1,10 @@
 import { View, FlatList, StyleSheet, ActivityIndicator, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
 import { PostCard } from '@/modules/feed'
 import { CommentItem } from '@/modules/posts'
-import type { Post, Comment, ApiResponse } from '@/types'
+import type { Post, Comment, ApiResponse, MutationResponse } from '@/types'
 import { useState } from 'react'
 
 interface PostWithComments extends Post {
@@ -28,11 +28,38 @@ interface PostDetailScreenProps {
 
 export function PostDetailScreen({ postId }: PostDetailScreenProps) {
   const [commentText, setCommentText] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const queryClient = useQueryClient()
 
   const { data: post, isLoading } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => fetchPost(postId),
   })
+
+  async function handleComment() {
+    if (!commentText.trim() || submitting) return
+    setSubmitting(true)
+    const text = commentText.trim()
+    setCommentText('')
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const token = session?.access_token
+      if (!token) throw new Error('Not authenticated')
+      const res = await api.post<MutationResponse<Comment>>(
+        `/api/posts/${postId}/comments`,
+        { content: text },
+        { Authorization: `Bearer ${token}` },
+      )
+      queryClient.setQueryData(['post', postId], (old: PostWithComments | undefined) => {
+        if (!old) return old
+        return { ...old, comments: [...old.comments, res.newData], commentsCount: old.commentsCount + 1 }
+      })
+    } catch {
+      setCommentText(text)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -56,9 +83,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
         data={post.comments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <CommentItem comment={item} />}
-        ListHeaderComponent={
-          <PostCard post={post} />
-        }
+        ListHeaderComponent={<PostCard post={post} />}
         ListFooterComponent={<View style={{ height: 80 }} />}
         style={styles.list}
       />
@@ -70,12 +95,14 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
           value={commentText}
           onChangeText={setCommentText}
           multiline
+          editable={!submitting}
         />
         <TouchableOpacity
-          style={[styles.sendBtn, !commentText.trim() && styles.sendBtnDisabled]}
-          disabled={!commentText.trim()}
+          style={[styles.sendBtn, (!commentText.trim() || submitting) && styles.sendBtnDisabled]}
+          onPress={handleComment}
+          disabled={!commentText.trim() || submitting}
         >
-          <Text style={styles.sendBtnText}>Post</Text>
+          <Text style={styles.sendBtnText}>{submitting ? '…' : 'Post'}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

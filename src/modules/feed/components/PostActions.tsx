@@ -1,4 +1,10 @@
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withSpring,
+} from 'react-native-reanimated'
 import { formatCount } from '@/utils/format'
 
 interface PostActionsProps {
@@ -10,13 +16,24 @@ interface PostActionsProps {
   onShare?: () => void
 }
 
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+
 export function PostActions({ likesCount, commentsCount, isLiked, onLike, onComment }: PostActionsProps) {
+  const scale = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }))
+
+  function handleLike() {
+    scale.value = withSequence(withSpring(1.4, { duration: 150 }), withSpring(1, { duration: 150 }))
+    onLike()
+  }
+
   return (
     <View style={styles.row}>
-      <TouchableOpacity style={styles.action} onPress={onLike}>
+      <AnimatedTouchable style={[styles.action, animatedStyle]} onPress={handleLike}>
         <Text style={[styles.icon, isLiked && styles.liked]}>♥</Text>
         <Text style={styles.count}>{formatCount(likesCount)}</Text>
-      </TouchableOpacity>
+      </AnimatedTouchable>
       <TouchableOpacity style={styles.action} onPress={onComment}>
         <Text style={styles.icon}>💬</Text>
         <Text style={styles.count}>{formatCount(commentsCount)}</Text>

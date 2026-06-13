@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
 import { PostCard } from '@/modules/feed'
 import { CommentItem } from '@/modules/posts'
+import { TL } from '@/constants/tl-theme'
 import type { Post, Comment, ApiResponse, MutationResponse } from '@/types'
 import { useState } from 'react'
 import { useRealtimePost } from '@/hooks/use-realtime-post'
@@ -94,7 +95,7 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
         <TextInput
           style={styles.input}
           placeholder="Add a comment…"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={TL.faint}
           value={commentText}
           onChangeText={setCommentText}
           multiline
@@ -113,36 +114,36 @@ export function PostDetailScreen({ postId }: PostDetailScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: '#FFFFFF' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
-  error: { color: '#6B7280', fontSize: 16 },
+  list: { flex: 1, backgroundColor: TL.bg },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: TL.bg },
+  error: { color: TL.muted, fontSize: 16 },
   inputBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: TL.border,
   },
   input: {
     flex: 1,
     minHeight: 36,
     maxHeight: 80,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: TL.surface2,
     borderRadius: 18,
     paddingHorizontal: 14,
     paddingVertical: 8,
     fontSize: 14,
-    color: '#111827',
+    color: TL.ink,
   },
   sendBtn: {
-    backgroundColor: '#FACC15',
+    backgroundColor: TL.amber,
     borderRadius: 999,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   sendBtnDisabled: { opacity: 0.4 },
-  sendBtnText: { fontWeight: '700', fontSize: 14, color: '#111827' },
+  sendBtnText: { fontWeight: '700', fontSize: 14, color: TL.bg },
 })

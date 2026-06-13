@@ -64,5 +64,5 @@
 ## 💡 Polish
 
 - [x] **`activeOpacity={0.7}`** — applied on all new/updated touchables ✅
-- [ ] **Skeleton loaders** — nice-to-have for future polish sprint
+- [x] **Skeleton loaders** — pulsing skeletons on Profile, Library, Game Detail, and Today screens ✅
 - [x] **Back button on detail screens** — all `[id].tsx` route wrappers have `←` back button ✅

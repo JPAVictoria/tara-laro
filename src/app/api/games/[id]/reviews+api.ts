@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import type { Review, PaginatedResponse } from '@/types'
 
 export async function GET(request: Request, context?: { params?: { id: string } }): Promise<Response> {
-  const id = context?.params?.id
+  const id = context?.params?.id ?? new URL(request.url).pathname.split('/').at(-2)
   if (!id) return Response.json({ data: [], hasMore: false, nextCursor: null, error: 'Missing game ID' }, { status: 400 })
 
   const url = new URL(request.url)

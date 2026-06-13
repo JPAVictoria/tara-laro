@@ -3,7 +3,7 @@ import { getRequestUser } from '@/lib/supabase-server'
 import type { Comment, MutationResponse } from '@/types'
 
 export async function POST(request: Request, context?: { params?: { id: string } }): Promise<Response> {
-  const id = context?.params?.id
+  const id = context?.params?.id ?? new URL(request.url).pathname.split('/').at(-2)
   if (!id) return Response.json({ oldData: null, newData: null, error: 'Missing post ID' }, { status: 400 })
 
   const authUser = await getRequestUser(request)

@@ -42,7 +42,7 @@ export async function GET(_request: Request, context?: { params?: { id: string }
 }
 
 export async function PATCH(request: Request, context?: { params?: { id: string } }): Promise<Response> {
-  const id = context?.params?.id
+  const id = context?.params?.id ?? new URL(request.url).pathname.split('/').at(-1)
   if (!id) return Response.json({ oldData: null, newData: null, error: 'Missing user ID' }, { status: 400 })
 
   const authUser = await getRequestUser(request)

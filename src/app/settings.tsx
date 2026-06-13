@@ -32,7 +32,7 @@ export default function SettingsScreen() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== 'granted') { Alert.alert('Permission needed', 'Allow photo access to update your avatar.'); return }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
@@ -51,7 +51,7 @@ export default function SettingsScreen() {
       const token = session?.access_token
       if (!token || !session?.user) throw new Error('Not authenticated')
 
-      const dbRes = await api.get<{ data: User | null }>(`/api/users/by-username/${session.user.email ?? ''}`)
+      const dbRes = await api.get<{ data: User | null }>('/api/users/me', { Authorization: `Bearer ${token}` })
       const userId = dbRes.data?.id
       if (!userId) throw new Error('User not found')
 

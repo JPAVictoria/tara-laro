@@ -7,7 +7,7 @@ interface PostWithComments extends Post {
 }
 
 export async function GET(request: Request, context?: { params?: { id: string } }): Promise<Response> {
-  const id = context?.params?.id
+  const id = context?.params?.id ?? new URL(request.url).pathname.split('/').at(-1)
   if (!id) return Response.json({ data: null, error: 'Missing post ID' }, { status: 400 })
 
   const user = await getRequestUser(request)

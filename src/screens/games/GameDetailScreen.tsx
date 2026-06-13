@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router'
 import { useGame, useGames } from '@/modules/games'
 import { RatingStars, GameCard } from '@/modules/games'
 import { ReviewCard } from '@/modules/reviews'
+import { GameDetailSkeleton } from '@/components/ui/Skeleton'
 import { TL } from '@/constants/tl-theme'
 
 interface GameDetailScreenProps {
@@ -46,9 +47,9 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
 
   if (isLoading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator color={TL.amber} size="large" />
-      </View>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <GameDetailSkeleton />
+      </ScrollView>
     )
   }
 

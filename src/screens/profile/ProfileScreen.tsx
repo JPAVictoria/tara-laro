@@ -22,6 +22,11 @@ import {
 import { GameCover } from '@/components/game/GameCover'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useApiClient } from '@/hooks/use-api-client'
+import {
+  ProfileSkeleton,
+  StatsSkeleton,
+  EntryTilesSkeleton,
+} from '@/components/ui/Skeleton'
 import type { User, UserGame } from '@/types'
 
 // ─── Profile avatar ──────────────────────────────────────────────────────────
@@ -229,7 +234,7 @@ export function ProfileScreen() {
   const { user: authUser } = useAuth()
   const apiClient = useApiClient()
 
-  const { data: profileRes } = useQuery({
+  const { data: profileRes, isLoading } = useQuery({
     queryKey: ['me'],
     queryFn: () => apiClient.get<{ data: User | null }>('/api/users/me'),
     enabled: !!authUser,
@@ -244,11 +249,23 @@ export function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <TopNav />
-        <IdentityBlock profile={profile} />
-        <StatsRow profile={profile} />
-        <View style={styles.section}>
-          <EntryTiles profile={profile} />
-        </View>
+        {isLoading ? (
+          <>
+            <ProfileSkeleton />
+            <StatsSkeleton />
+            <View style={styles.section}>
+              <EntryTilesSkeleton />
+            </View>
+          </>
+        ) : (
+          <>
+            <IdentityBlock profile={profile} />
+            <StatsRow profile={profile} />
+            <View style={styles.section}>
+              <EntryTiles profile={profile} />
+            </View>
+          </>
+        )}
         <NowPlaying />
       </ScrollView>
     </SafeAreaView>

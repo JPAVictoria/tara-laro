@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
@@ -15,6 +14,7 @@ import { SectionLabel, tlCard, amberBtn, amberBtnText } from '@/components/tl-sh
 import { GameCover } from '@/components/game/GameCover'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useApiClient } from '@/hooks/use-api-client'
+import { LibraryRowSkeleton } from '@/components/ui/Skeleton'
 import type { UserGame } from '@/types'
 
 // ─── Shelf tabs ─────────────────────────────────────────────────────────────
@@ -223,8 +223,13 @@ export function LibraryScreen() {
         <ShelfTabs active={activeTab} counts={counts} onSelect={setActiveTab} />
 
         {isLoading ? (
-          <View style={styles.loadingWrap}>
-            <ActivityIndicator color={TL.amber} />
+          <View style={[tlCard, { marginTop: 4 }]}>
+            {[0, 1, 2].map((i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <View style={styles.hairline} />}
+                <LibraryRowSkeleton />
+              </React.Fragment>
+            ))}
           </View>
         ) : activeEntries.length === 0 ? (
           <EmptyShelf tab={activeTab} />

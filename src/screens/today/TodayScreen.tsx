@@ -5,7 +5,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
   Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -25,6 +24,7 @@ import { GameCover } from '@/components/game/GameCover'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { useGames } from '@/modules/games'
 import { useApiClient } from '@/hooks/use-api-client'
+import { TodayPickSkeleton, FriendRowSkeleton } from '@/components/ui/Skeleton'
 import type { Post, PaginatedResponse, UserGame, MutationResponse } from '@/types'
 
 // ─── TodayHeader ───────────────────────────────────────────────────────────
@@ -95,9 +95,7 @@ function TodayPick() {
     return (
       <View style={styles.section}>
         <SectionLabel kicker="TODAY'S PICK" subtitle="Picked for you" />
-        <View style={[tlCard, styles.pickLoadingCard]}>
-          <ActivityIndicator color={TL.amber} />
-        </View>
+        <TodayPickSkeleton />
       </View>
     )
   }
@@ -214,8 +212,15 @@ function TodayFriends() {
     return (
       <View style={styles.section}>
         <SectionLabel kicker="FROM YOUR CIRCLE" />
-        <View style={[tlCard, styles.emptyCard]}>
-          <ActivityIndicator color={TL.amber} />
+        <View style={tlCard}>
+          <View style={styles.cardInner}>
+            {[0, 1, 2].map((i) => (
+              <React.Fragment key={i}>
+                {i > 0 && <View style={styles.hairline} />}
+                <FriendRowSkeleton />
+              </React.Fragment>
+            ))}
+          </View>
         </View>
       </View>
     )

@@ -6,11 +6,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
+import { useQuery } from '@tanstack/react-query'
 import { TL } from '@/constants/tl-theme'
 import { Avatar, SectionLabel, tlCard } from '@/components/tl-shared'
+import { useAuth } from '@/modules/auth/hooks/use-auth'
+import { useApiClient } from '@/hooks/use-api-client'
+import type { Post, PaginatedResponse } from '@/types'
 
 // ─── Group data ─────────────────────────────────────────────────────────────
 
@@ -50,34 +55,6 @@ const GROUPS = [
   },
 ]
 
-// ─── Thread data ─────────────────────────────────────────────────────────────
-
-const THREADS = [
-  {
-    id: 't1',
-    title: 'Why Lumen Drift has the best traversal system of the decade',
-    group: 'Cozy Players',
-    author: 'Theo P',
-    replies: 47,
-    likes: 128,
-  },
-  {
-    id: 't2',
-    title: 'Cobalt Choir — the ending hit different for me. Spoilers.',
-    group: 'JRPGs',
-    author: 'Kira S',
-    replies: 89,
-    likes: 212,
-  },
-  {
-    id: 't3',
-    title: 'Best cozy games to play during monsoon season?',
-    group: 'Cozy Players',
-    author: 'Jules M',
-    replies: 31,
-    likes: 74,
-  },
-]
 
 // ─── CommunityHeader ─────────────────────────────────────────────────────────
 
@@ -158,17 +135,19 @@ function ThreadRow({
   author,
   replies,
   likes,
+  onPress,
 }: {
   title: string
   group: string
   author: string
   replies: number
   likes: number
+  onPress?: () => void
 }) {
   return (
     <TouchableOpacity
       style={styles.threadRow}
-      onPress={() => Alert.alert(group, 'Thread detail coming soon.')}
+      onPress={onPress ?? (() => Alert.alert(group, 'Thread detail coming soon.'))}
       activeOpacity={0.7}
     >
       <View style={styles.threadContent}>
@@ -189,22 +168,57 @@ function ThreadRow({
   )
 }
 
-// ─── Trending section ────────────────────────────────────────────────────────
+// ─── Trending section — real posts ──────────────────────────────────────────
 
 function TrendingSection() {
+  const router = useRouter()
+  const apiClient = useApiClient()
+  const { user: authUser } = useAuth()
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['community-feed'],
+    queryFn: () => apiClient.get<PaginatedResponse<Post>>('/api/posts'),
+    enabled: !!authUser,
+  })
+
+  const posts = data?.data?.slice(0, 5) ?? []
+
+  if (isLoading) {
+    return (
+      <View style={styles.section}>
+        <SectionLabel kicker="TRENDING TODAY" />
+        <View style={[tlCard, styles.loadingCard]}>
+          <ActivityIndicator color={TL.amber} />
+        </View>
+      </View>
+    )
+  }
+
+  if (posts.length === 0) {
+    return (
+      <View style={styles.section}>
+        <SectionLabel kicker="TRENDING TODAY" />
+        <View style={[tlCard, styles.loadingCard]}>
+          <Text style={styles.emptyText}>No posts yet. Be the first to share!</Text>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.section}>
       <SectionLabel kicker="TRENDING TODAY" />
       <View style={tlCard}>
-        {THREADS.map((t, idx) => (
-          <React.Fragment key={t.id}>
+        {posts.map((post, idx) => (
+          <React.Fragment key={post.id}>
             {idx > 0 && <View style={styles.hairline} />}
             <ThreadRow
-              title={t.title}
-              group={t.group}
-              author={t.author}
-              replies={t.replies}
-              likes={t.likes}
+              title={post.content}
+              group={post.game?.title ?? 'General'}
+              author={post.user.displayName}
+              replies={post.commentsCount}
+              likes={post.likesCount}
+              onPress={() => router.push(`/posts/${post.id}`)}
             />
           </React.Fragment>
         ))}
@@ -382,6 +396,10 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     marginTop: 2,
   },
+
+  // Loading / empty
+  loadingCard: { padding: 32, alignItems: 'center', justifyContent: 'center' },
+  emptyText: { fontSize: 14, color: TL.muted, textAlign: 'center' },
 
   // Threads
   hairline: {

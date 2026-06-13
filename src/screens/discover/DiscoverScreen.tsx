@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { GameCard } from '@/modules/games'
+import { NewsCard, useNews } from '@/modules/news'
 import type { Game } from '@/types'
 
 const GENRES = ['All', 'RPG', 'Action', 'Indie', 'Roguelike', 'Simulation', 'Souls-like']
@@ -25,6 +26,7 @@ export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
   const [search, setSearch] = useState('')
   const [activeGenre, setActiveGenre] = useState('All')
   const router = useRouter()
+  const { articles } = useNews()
 
   const filtered = games.filter((g) => {
     const matchesSearch = search.trim()
@@ -85,6 +87,19 @@ export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
         </View>
       ) : showSections ? (
         <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+          {articles.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Gaming News</Text>
+              <FlatList
+                horizontal
+                data={articles}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => <NewsCard article={item} />}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.horizontalList}
+              />
+            </View>
+          )}
           <Section title="Trending Games" games={trending} onPress={(id) => router.push(`/games/${id}`)} />
           <Section title="New Releases" games={newReleases} onPress={(id) => router.push(`/games/${id}`)} />
           <Section title="All Games" games={games} onPress={(id) => router.push(`/games/${id}`)} />

@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { getRequestUser } from '@/lib/supabase-server'
 import type { Game, Review, ApiResponse } from '@/types'
 
 interface GameDetail extends Game {
@@ -7,9 +6,7 @@ interface GameDetail extends Game {
   reviewsCount: number
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }): Promise<Response> {
-  const user = await getRequestUser(request)
-
+export async function GET(_request: Request, { params }: { params: { id: string } }): Promise<Response> {
   const game = await prisma.game.findUnique({
     where: { id: params.id },
     include: {

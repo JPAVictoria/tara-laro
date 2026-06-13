@@ -90,8 +90,8 @@ export default function SearchScreen() {
           <Text style={styles.hint}>No results for "{query}"</Text>
         </View>
       ) : (
-        <SectionList
-          sections={sections}
+        <SectionList<Game | User | Post>
+          sections={sections as any}
           keyExtractor={(item) => item.id}
           renderSectionHeader={({ section }) => (
             <View style={styles.sectionHeader}>
@@ -100,7 +100,7 @@ export default function SearchScreen() {
           )}
           renderItem={({ item, section }) => {
             if (section.type === 'game') {
-              const game = item as Game
+              const game = item as unknown as Game
               return (
                 <TouchableOpacity
                   style={styles.row}
@@ -116,7 +116,7 @@ export default function SearchScreen() {
               )
             }
             if (section.type === 'user') {
-              const user = item as User
+              const user = item as unknown as User
               return (
                 <TouchableOpacity
                   style={styles.row}
@@ -131,7 +131,7 @@ export default function SearchScreen() {
                 </TouchableOpacity>
               )
             }
-            const post = item as Post
+            const post = item as unknown as Post
             return (
               <TouchableOpacity
                 style={styles.row}

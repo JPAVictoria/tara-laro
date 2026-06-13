@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Typography } from '@/components/ui/Typography'
 import { Avatar } from '@/components/ui/Avatar'
-import { LogoIcon } from '@/components/logo'
+import { GamerIllustration } from '@/components/gamer-illustration'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { supabase } from '@/lib/supabase'
 import { api } from '@/utils/api'
@@ -102,7 +102,7 @@ export default function OnboardingSetupScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View style={styles.logoRow}>
-            <LogoIcon size={40} />
+            <GamerIllustration size={48} />
           </View>
 
           <Typography variant="h2">set up your profile.</Typography>

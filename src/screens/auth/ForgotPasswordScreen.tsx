@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { LogoIcon } from '@/components/logo'
+import { GamerIllustration } from '@/components/gamer-illustration'
 import { supabase } from '@/lib/supabase'
 import { TL } from '@/constants/tl-theme'
 
@@ -33,28 +33,25 @@ export function ForgotPasswordScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} disabled={submitting}>
-            <Text style={styles.backText}>← Back</Text>
-          </TouchableOpacity>
-          <LogoIcon size={36} />
+        {/* ── Back ── */}
+        <TouchableOpacity style={styles.backRow} onPress={() => router.back()} disabled={submitting}>
+          <Text style={styles.backText}>← Back</Text>
+        </TouchableOpacity>
+
+        {/* ── Illustration ── */}
+        <View style={styles.hero}>
+          <GamerIllustration size={96} />
         </View>
 
-        <Text style={styles.heading}>reset password.</Text>
+        {/* ── Heading ── */}
+        <Text style={styles.heading}>reset password</Text>
         <Text style={styles.subtitle}>
           {sent
-            ? 'Check your email for a reset link.'
-            : "We'll send a reset link to your email."}
+            ? 'Check your inbox and tap the link to set a new password.'
+            : "Enter your email and we'll send you a reset link."}
         </Text>
 
-        {sent ? (
-          <View style={styles.successBox}>
-            <Text style={styles.successIcon}>✓</Text>
-            <Text style={styles.successText}>Reset link sent!</Text>
-            <Text style={styles.successSub}>Check your inbox and follow the link to set a new password.</Text>
-          </View>
-        ) : null}
-
+        {/* ── Form ── */}
         {!sent ? (
           <>
             <View style={styles.inputWrap}>
@@ -78,12 +75,17 @@ export function ForgotPasswordScreen() {
             />
           </>
         ) : (
-          <Button
-            label="Back to sign in"
-            onPress={() => router.replace('/(auth)/login')}
-            variant="secondary"
-            fullWidth
-          />
+          <>
+            <View style={styles.successCard}>
+              <Text style={styles.successCheck}>✓</Text>
+              <Text style={styles.successTitle}>Link sent!</Text>
+            </View>
+            <Button
+              label="Back to sign in"
+              onPress={() => router.replace('/(auth)/login')}
+              fullWidth
+            />
+          </>
         )}
       </View>
     </SafeAreaView>
@@ -94,30 +96,25 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: TL.bg },
   container: { flex: 1, paddingHorizontal: 24 },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 16,
-    paddingBottom: 32,
-  },
+  backRow: { paddingTop: 16, paddingBottom: 4 },
   backText: { fontSize: 15, color: TL.amber, fontWeight: '600' },
 
-  heading: { fontSize: 30, fontWeight: '900', color: TL.ink, letterSpacing: -0.5 },
-  subtitle: { fontSize: 15, color: TL.muted, marginTop: 4, marginBottom: 28 },
+  hero: { alignItems: 'center', paddingTop: 20, paddingBottom: 8 },
+
+  heading: { fontSize: 28, fontWeight: '900', color: TL.ink, letterSpacing: -0.5, marginTop: 8 },
+  subtitle: { fontSize: 14, color: TL.muted, marginTop: 6, marginBottom: 28, lineHeight: 21 },
 
   inputWrap: { marginBottom: 24 },
 
-  successBox: {
+  successCard: {
     backgroundColor: TL.surface,
     borderWidth: 1,
     borderColor: TL.borderStrong,
     borderRadius: TL.radius,
-    padding: 24,
+    paddingVertical: 28,
     alignItems: 'center',
     marginBottom: 28,
   },
-  successIcon: { fontSize: 36, color: TL.good },
-  successText: { fontSize: 18, fontWeight: '800', color: TL.ink, marginTop: 8 },
-  successSub: { fontSize: 14, color: TL.muted, textAlign: 'center', marginTop: 6, lineHeight: 20 },
+  successCheck: { fontSize: 40, color: TL.good },
+  successTitle: { fontSize: 17, fontWeight: '800', color: TL.ink, marginTop: 8 },
 })

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { LogoIcon } from '@/components/logo'
+import { GamerIllustration } from '@/components/gamer-illustration'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -82,7 +82,7 @@ export function SplashScreen({ ready = false }: { ready?: boolean }) {
     <Animated.View style={[styles.container, bgStyle]}>
       <View style={styles.content}>
         <Animated.View style={iconStyle}>
-          <LogoIcon size={96} />
+          <GamerIllustration size={110} />
         </Animated.View>
 
         <Animated.View style={[logoStyle, styles.wordmarkRow]}>

@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { OAuthButton } from '@/modules/auth'
-import { LogoIcon } from '@/components/logo'
+import { GamerIllustration } from '@/components/gamer-illustration'
 import { useAuth } from '@/modules/auth/hooks/use-auth'
 import { TL } from '@/constants/tl-theme'
 
@@ -40,7 +40,6 @@ export function RegisterScreen() {
     try {
       await signUpWithEmail(email.trim(), password)
       setRedirecting(true)
-      // Keep submitting=true — navigation will unmount this screen
     } catch (e) {
       setError((e as Error).message)
       setSubmitting(false)
@@ -64,17 +63,24 @@ export function RegisterScreen() {
           showsVerticalScrollIndicator={false}
           scrollEnabled={!busy}
         >
-          <View style={styles.header}>
+          {/* ── Back ── */}
+          <View style={styles.backRow}>
             <TouchableOpacity onPress={() => router.back()} disabled={busy}>
               <Text style={styles.backText}>← Back</Text>
             </TouchableOpacity>
-            <LogoIcon size={36} />
           </View>
 
-          <Text style={styles.heading}>create account.</Text>
-          <Text style={styles.subtitle}>join the gaming community</Text>
+          {/* ── Hero ── */}
+          <View style={styles.hero}>
+            <GamerIllustration size={112} />
+            <Text style={styles.wordmark}>TaraLaro</Text>
+          </View>
 
-          <View style={styles.inputs}>
+          {/* ── Section label ── */}
+          <Text style={styles.sectionLabel}>CREATE ACCOUNT</Text>
+
+          {/* ── Form ── */}
+          <View style={styles.form}>
             <Input
               dark
               label="Email"
@@ -106,21 +112,25 @@ export function RegisterScreen() {
             />
           </View>
 
-          <View style={styles.ctaWrap}>
+          {/* ── CTA ── */}
+          <View style={styles.cta}>
             <Button label="Create account" onPress={handleRegister} loading={submitting} disabled={busy} fullWidth />
           </View>
 
-          <View style={styles.dividerRow}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerLabel}>or</Text>
-            <View style={styles.dividerLine} />
+          {/* ── Or divider ── */}
+          <View style={styles.orRow}>
+            <View style={styles.orLine} />
+            <Text style={styles.orLabel}>or</Text>
+            <View style={styles.orLine} />
           </View>
 
+          {/* ── OAuth ── */}
           <View style={styles.oauth}>
             <OAuthButton dark provider="google" onPress={() => handleOAuth('google')} disabled={busy} />
             <OAuthButton dark provider="discord" onPress={() => handleOAuth('discord')} disabled={busy} />
           </View>
 
+          {/* ── Footer ── */}
           <View style={styles.footer}>
             <Text style={styles.footerMuted}>Already have one?</Text>
             <TouchableOpacity onPress={() => router.replace('/(auth)/login')} disabled={busy}>
@@ -130,11 +140,12 @@ export function RegisterScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
 
+      {/* ── Redirect splash overlay ── */}
       {redirecting && (
-        <View style={styles.redirectOverlay} pointerEvents="box-only">
-          <LogoIcon size={64} />
-          <Text style={styles.redirectWordmark}>TaraLaro</Text>
-          <ActivityIndicator color={TL.amber} size="large" style={styles.redirectSpinner} />
+        <View style={styles.overlay} pointerEvents="box-only">
+          <GamerIllustration size={110} />
+          <Text style={styles.overlayWordmark}>TaraLaro</Text>
+          <ActivityIndicator color={TL.amber} size="large" style={styles.overlaySpinner} />
         </View>
       )}
     </SafeAreaView>
@@ -144,46 +155,44 @@ export function RegisterScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: TL.bg },
   kav: { flex: 1 },
-  scroll: { flexGrow: 1, paddingHorizontal: 24 },
+  scroll: { flexGrow: 1 },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: 16,
-    paddingBottom: 28,
-  },
+  backRow: { paddingHorizontal: 24, paddingTop: 16, paddingBottom: 4 },
   backText: { fontSize: 15, color: TL.amber, fontWeight: '600' },
 
-  heading: { fontSize: 30, fontWeight: '900', color: TL.ink, letterSpacing: -0.5 },
-  subtitle: { fontSize: 15, color: TL.muted, marginTop: 4, marginBottom: 24 },
+  hero: { alignItems: 'center', paddingTop: 12, paddingBottom: 8 },
+  wordmark: { fontSize: 26, fontWeight: '900', color: TL.ink, letterSpacing: -0.5, marginTop: 6 },
 
-  inputs: { gap: 14 },
-  ctaWrap: { marginTop: 24 },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: TL.muted,
+    letterSpacing: 1.2,
+    paddingHorizontal: 24,
+    marginTop: 20,
+    marginBottom: 16,
+  },
 
-  dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
-  dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: TL.faint },
-  dividerLabel: { marginHorizontal: 12, fontSize: 11, color: TL.muted },
+  form: { paddingHorizontal: 24, gap: 14 },
+  cta: { marginTop: 24, paddingHorizontal: 24 },
+
+  orRow: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 24, marginVertical: 20 },
+  orLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: TL.faint },
+  orLabel: { marginHorizontal: 12, fontSize: 11, color: TL.muted },
 
   oauth: { flexDirection: 'row', justifyContent: 'center', gap: 16 },
 
-  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 28, paddingBottom: 24 },
+  footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 28, paddingBottom: 28 },
   footerMuted: { fontSize: 13, color: TL.muted },
   link: { fontSize: 13, color: TL.amber, fontWeight: '700' },
 
-  redirectOverlay: {
+  overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: TL.bg,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 99,
   },
-  redirectWordmark: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: TL.ink,
-    letterSpacing: -0.5,
-    marginTop: 12,
-  },
-  redirectSpinner: { marginTop: 32 },
+  overlayWordmark: { fontSize: 32, fontWeight: '900', color: TL.ink, letterSpacing: -1, marginTop: 12 },
+  overlaySpinner: { marginTop: 32 },
 })

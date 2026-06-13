@@ -1,5 +1,7 @@
-import { LibraryScreen } from '@/screens/library/LibraryScreen'
+import { useGames } from '@/modules/games'
+import { DiscoverScreen } from '@/screens/discover/DiscoverScreen'
 
-export default function LibraryRoute() {
-  return <LibraryScreen />
+export default function DiscoverRoute() {
+  const { games, isLoading } = useGames()
+  return <DiscoverScreen games={games} isLoading={isLoading} />
 }

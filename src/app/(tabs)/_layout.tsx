@@ -26,7 +26,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="index" options={{ title: 'Today', tabBarIcon: icon('house.fill') }} />
-      <Tabs.Screen name="discover" options={{ title: 'Library', tabBarIcon: icon('books.vertical.fill') }} />
+      <Tabs.Screen name="discover" options={{ title: 'Discover', tabBarIcon: icon('books.vertical.fill') }} />
       <Tabs.Screen name="notifications" options={{ title: 'Community', tabBarIcon: icon('bubble.left.fill') }} />
       <Tabs.Screen name="profile" options={{ title: 'You', tabBarIcon: icon('person.fill') }} />
       <Tabs.Screen name="create" options={{ href: null }} />

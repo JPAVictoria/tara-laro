@@ -23,13 +23,14 @@ interface SearchResults {
 
 async function search(q: string): Promise<SearchResults> {
   if (!q.trim()) return { games: [], users: [], posts: [] }
-  const [games, posts] = await Promise.all([
+  const [games, posts, users] = await Promise.all([
     api.get<PaginatedResponse<Game>>(`/api/games?search=${encodeURIComponent(q)}`),
     api.get<PaginatedResponse<Post>>(`/api/posts?search=${encodeURIComponent(q)}`),
+    api.get<{ data: User[] }>(`/api/users?search=${encodeURIComponent(q)}`),
   ])
   return {
     games: games.data,
-    users: [],
+    users: users.data,
     posts: posts.data,
   }
 }
@@ -46,6 +47,7 @@ export default function SearchScreen() {
 
   const sections = [
     ...(data?.games.length ? [{ title: 'Games', data: data.games, type: 'game' as const }] : []),
+    ...(data?.users.length ? [{ title: 'Players', data: data.users, type: 'user' as const }] : []),
     ...(data?.posts.length ? [{ title: 'Posts', data: data.posts, type: 'post' as const }] : []),
   ]
 
@@ -110,6 +112,22 @@ export default function SearchScreen() {
                     <Text style={styles.rowSub}>{game.genre.slice(0, 3).join(' · ')}</Text>
                   </View>
                   <Text style={styles.rowRating}>★ {game.avgRating.toFixed(1)}</Text>
+                </TouchableOpacity>
+              )
+            }
+            if (section.type === 'user') {
+              const user = item as User
+              return (
+                <TouchableOpacity
+                  style={styles.row}
+                  onPress={() => router.push(`/users/${user.username}`)}
+                >
+                  <View style={styles.rowIcon}><Text style={styles.rowIconText}>👤</Text></View>
+                  <View style={styles.rowBody}>
+                    <Text style={styles.rowTitle}>{user.displayName}</Text>
+                    <Text style={styles.rowSub}>@{user.username}</Text>
+                  </View>
+                  <Text style={styles.rowRating}>{user.followersCount} followers</Text>
                 </TouchableOpacity>
               )
             }

@@ -1,30 +1,118 @@
-import { View, Text, FlatList, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native'
+import { useQuery } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase'
+import { api } from '@/utils/api'
+import { PostCard } from '@/modules/feed'
+import { CommentItem } from '@/modules/posts'
+import type { Post, Comment, ApiResponse } from '@/types'
+import { useState } from 'react'
+
+interface PostWithComments extends Post {
+  comments: Comment[]
+}
+
+async function fetchPost(id: string): Promise<PostWithComments> {
+  const { data: { session } } = await supabase.auth.getSession()
+  const token = session?.access_token
+  const res = await api.get<ApiResponse<PostWithComments>>(
+    `/api/posts/${id}`,
+    token ? { Authorization: `Bearer ${token}` } : {},
+  )
+  if (!res.data) throw new Error(res.error ?? 'Post not found')
+  return res.data
+}
 
 interface PostDetailScreenProps {
   postId: string
 }
 
-export function PostDetailScreen({ postId: _postId }: PostDetailScreenProps) {
+export function PostDetailScreen({ postId }: PostDetailScreenProps) {
+  const [commentText, setCommentText] = useState('')
+
+  const { data: post, isLoading } = useQuery({
+    queryKey: ['post', postId],
+    queryFn: () => fetchPost(postId),
+  })
+
+  if (isLoading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator color="#FACC15" />
+      </View>
+    )
+  }
+
+  if (!post) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.error}>Post not found</Text>
+      </View>
+    )
+  }
+
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <FlatList
-        data={[]}
-        keyExtractor={(item) => item}
-        renderItem={() => null}
+        data={post.comments}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <CommentItem comment={item} />}
         ListHeaderComponent={
-          <View style={styles.post}>
-            <Text style={styles.placeholder}>Post content</Text>
-            {/* Day 10: full PostCard + PostActions */}
-          </View>
+          <PostCard post={post} />
         }
-        /* Comments list below */
+        ListFooterComponent={<View style={{ height: 80 }} />}
+        style={styles.list}
       />
-    </View>
+      <View style={styles.inputBar}>
+        <TextInput
+          style={styles.input}
+          placeholder="Add a comment…"
+          placeholderTextColor="#9CA3AF"
+          value={commentText}
+          onChangeText={setCommentText}
+          multiline
+        />
+        <TouchableOpacity
+          style={[styles.sendBtn, !commentText.trim() && styles.sendBtnDisabled]}
+          disabled={!commentText.trim()}
+        >
+          <Text style={styles.sendBtnText}>Post</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  post: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#E5E7EB' },
-  placeholder: { padding: 16, color: '#6B7280' },
+  list: { flex: 1, backgroundColor: '#FFFFFF' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
+  error: { color: '#6B7280', fontSize: 16 },
+  inputBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E5E7EB',
+  },
+  input: {
+    flex: 1,
+    minHeight: 36,
+    maxHeight: 80,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    fontSize: 14,
+    color: '#111827',
+  },
+  sendBtn: {
+    backgroundColor: '#FACC15',
+    borderRadius: 999,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  sendBtnDisabled: { opacity: 0.4 },
+  sendBtnText: { fontWeight: '700', fontSize: 14, color: '#111827' },
 })

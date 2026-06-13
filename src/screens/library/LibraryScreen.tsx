@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
 import { TL } from '@/constants/tl-theme'
 import { SectionLabel, tlCard, GAMES } from '@/components/tl-shared'
 import { GameCover } from '@/components/game/GameCover'
@@ -14,17 +15,24 @@ import { GameCover } from '@/components/game/GameCover'
 // ─── Shelf tabs ─────────────────────────────────────────────────────────────
 
 type ShelfTab = 'playing' | 'wishlist' | 'finished' | 'reviews'
+type LayoutMode = 'list' | 'grid'
 
 const SHELF_TABS: { id: ShelfTab; label: string; count: number }[] = [
   { id: 'playing', label: 'Playing', count: 3 },
-  { id: 'wishlist', label: 'Wishlist', count: 14 },
-  { id: 'finished', label: 'Finished', count: 142 },
-  { id: 'reviews', label: 'Reviews', count: 48 },
+  { id: 'wishlist', label: 'Wishlist', count: 0 },
+  { id: 'finished', label: 'Finished', count: 0 },
+  { id: 'reviews', label: 'Reviews', count: 0 },
 ]
 
 // ─── LibraryHeader ─────────────────────────────────────────────────────────
 
-function LibraryHeader() {
+function LibraryHeader({
+  layout,
+  onToggleLayout,
+}: {
+  layout: LayoutMode
+  onToggleLayout: () => void
+}) {
   return (
     <View style={styles.headerRow}>
       <View>
@@ -32,11 +40,19 @@ function LibraryHeader() {
         <Text style={styles.headerTitle}>Library</Text>
       </View>
       <View style={styles.headerActions}>
-        <TouchableOpacity style={styles.iconBtn}>
-          <Text style={styles.iconBtnText}>⊞</Text>
+        <TouchableOpacity
+          style={[styles.iconBtn, layout === 'grid' && styles.iconBtnActive]}
+          onPress={onToggleLayout}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.iconBtnText, layout === 'grid' && styles.iconBtnTextActive]}>⊞</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconBtn}>
-          <Text style={styles.iconBtnText}>◎</Text>
+        <TouchableOpacity
+          style={[styles.iconBtn, layout === 'list' && styles.iconBtnActive]}
+          onPress={onToggleLayout}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.iconBtnText, layout === 'list' && styles.iconBtnTextActive]}>◎</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -61,6 +77,7 @@ function ShelfTabs({
             key={tab.id}
             style={[styles.tab, isActive && styles.tabActive]}
             onPress={() => onSelect(tab.id)}
+            activeOpacity={0.7}
           >
             <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
               {tab.label}
@@ -86,8 +103,8 @@ function StreakCard() {
         </View>
       </View>
       <View style={styles.streakCenter}>
-        <Text style={styles.streakMain}>14h 32m · 5 day streak</Text>
-        <Text style={styles.streakSub}>+3h vs last week</Text>
+        <Text style={styles.streakMain}>Start your streak</Text>
+        <Text style={styles.streakSub}>Play a game to begin tracking</Text>
       </View>
     </View>
   )
@@ -103,7 +120,7 @@ function ProgressBar({ value }: { value: number }) {
   )
 }
 
-// ─── Playing row ────────────────────────────────────────────────────────────
+// ─── Playing row (list layout) ──────────────────────────────────────────────
 
 function PlayingRow({
   id,
@@ -114,10 +131,15 @@ function PlayingRow({
   progress: number
   status: string
 }) {
+  const router = useRouter()
   const game = GAMES[id]
   if (!game) return null
   return (
-    <View style={styles.playingRow}>
+    <TouchableOpacity
+      style={styles.playingRow}
+      onPress={() => router.push(`/games/${id}`)}
+      activeOpacity={0.7}
+    >
       <GameCover id={id} w={56} h={72} />
       <View style={styles.playingInfo}>
         <Text style={styles.playingTitle} numberOfLines={1}>
@@ -131,14 +153,58 @@ function PlayingRow({
         <Text style={styles.progressLabel}>{progress}% complete</Text>
       </View>
       <Text style={styles.chevron}>›</Text>
+    </TouchableOpacity>
+  )
+}
+
+// ─── Playing grid item ──────────────────────────────────────────────────────
+
+function PlayingGridItem({ id }: { id: string }) {
+  const router = useRouter()
+  const game = GAMES[id]
+  if (!game) return null
+  return (
+    <TouchableOpacity
+      style={styles.gridItem}
+      onPress={() => router.push(`/games/${id}`)}
+      activeOpacity={0.7}
+    >
+      <GameCover id={id} w="100%" h={110} />
+      <Text style={styles.gridTitle} numberOfLines={1}>{game.title}</Text>
+    </TouchableOpacity>
+  )
+}
+
+// ─── Empty shelf ────────────────────────────────────────────────────────────
+
+const EMPTY_MESSAGES: Record<ShelfTab, string> = {
+  playing: 'No games in progress.',
+  wishlist: 'Your wishlist is empty.\nBrowse Discover to add games.',
+  finished: 'No finished games yet.\nComplete a game to see it here.',
+  reviews: 'No reviews written yet.\nShare your thoughts on a game.',
+}
+
+function EmptyShelf({ tab }: { tab: ShelfTab }) {
+  return (
+    <View style={styles.emptyWrap}>
+      <Text style={styles.emptyText}>{EMPTY_MESSAGES[tab]}</Text>
     </View>
   )
 }
 
 // ─── LibraryScreen ──────────────────────────────────────────────────────────
 
+const PLAYING_GAMES = [
+  { id: 'stardust', progress: 38, status: 'Session: 1h ago' },
+  { id: 'neon', progress: 12, status: 'Session: 3 days ago' },
+  { id: 'lumen', progress: 18, status: 'Session: 1 week ago' },
+]
+
 export function LibraryScreen() {
   const [activeTab, setActiveTab] = useState<ShelfTab>('playing')
+  const [layout, setLayout] = useState<LayoutMode>('list')
+
+  const showPlaying = activeTab === 'playing'
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -147,22 +213,38 @@ export function LibraryScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <LibraryHeader />
+        <LibraryHeader layout={layout} onToggleLayout={() => setLayout(l => l === 'list' ? 'grid' : 'list')} />
         <ShelfTabs active={activeTab} onSelect={setActiveTab} />
         <StreakCard />
 
-        <View style={styles.section}>
-          <SectionLabel kicker="PLAYING" rightLink="3 active" />
-          <View style={tlCard}>
-            <View style={styles.cardInner}>
-              <PlayingRow id="stardust" progress={38} status="Session: 1h ago" />
-              <View style={styles.hairline} />
-              <PlayingRow id="neon" progress={12} status="Session: 3 days ago" />
-              <View style={styles.hairline} />
-              <PlayingRow id="lumen" progress={18} status="Session: 1 week ago" />
+        {showPlaying ? (
+          layout === 'list' ? (
+            <View style={styles.section}>
+              <SectionLabel kicker="PLAYING" rightLink="3 active" />
+              <View style={tlCard}>
+                <View style={styles.cardInner}>
+                  {PLAYING_GAMES.map((g, i) => (
+                    <React.Fragment key={g.id}>
+                      {i > 0 && <View style={styles.hairline} />}
+                      <PlayingRow id={g.id} progress={g.progress} status={g.status} />
+                    </React.Fragment>
+                  ))}
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+          ) : (
+            <View style={styles.section}>
+              <SectionLabel kicker="PLAYING" rightLink="3 active" />
+              <View style={styles.gridWrap}>
+                {PLAYING_GAMES.map((g) => (
+                  <PlayingGridItem key={g.id} id={g.id} />
+                ))}
+              </View>
+            </View>
+          )
+        ) : (
+          <EmptyShelf tab={activeTab} />
+        )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -216,9 +298,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  iconBtnActive: {
+    backgroundColor: TL.amber,
+  },
   iconBtnText: {
     fontSize: 18,
     color: TL.muted,
+  },
+  iconBtnTextActive: {
+    color: '#fff',
   },
 
   // Shelf tabs
@@ -352,5 +440,33 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: TL.faint,
     fontWeight: '600',
+  },
+
+  // Grid layout
+  gridWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  gridItem: {
+    width: '47%',
+    gap: 6,
+  },
+  gridTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: TL.ink,
+  },
+
+  // Empty state
+  emptyWrap: {
+    paddingVertical: 48,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 14,
+    color: TL.muted,
+    textAlign: 'center',
+    lineHeight: 22,
   },
 })

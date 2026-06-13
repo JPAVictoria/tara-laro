@@ -16,6 +16,7 @@ import { Image } from 'expo-image'
 import * as ImagePicker from 'expo-image-picker'
 import { useRouter } from 'expo-router'
 import { useGames } from '@/modules/games'
+import { TL } from '@/constants/tl-theme'
 import type { Game } from '@/types'
 
 const MAX_IMAGES = 5
@@ -45,7 +46,7 @@ export function CreateScreen({ onSubmit, submitting }: CreateScreenProps) {
       return
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsMultipleSelection: true,
       selectionLimit: MAX_IMAGES - images.length,
       quality: 0.8,
@@ -89,7 +90,7 @@ export function CreateScreen({ onSubmit, submitting }: CreateScreenProps) {
           <TextInput
             style={styles.captionInput}
             placeholder="What are you playing? Share your thoughts…"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={TL.muted}
             value={caption}
             onChangeText={setCaption}
             multiline
@@ -132,7 +133,7 @@ export function CreateScreen({ onSubmit, submitting }: CreateScreenProps) {
               <TextInput
                 style={styles.gameSearchInput}
                 placeholder="Search games…"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={TL.muted}
                 value={gameSearch}
                 onChangeText={setGameSearch}
                 autoCapitalize="none"
@@ -161,7 +162,7 @@ export function CreateScreen({ onSubmit, submitting }: CreateScreenProps) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FFFFFF' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -169,23 +170,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
-  cancelText: { fontSize: 16, color: '#6B7280' },
-  heading: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  cancelText: { fontSize: 16, color: TL.muted },
+  heading: { fontSize: 16, fontWeight: '700', color: TL.ink },
   postBtn: {
-    backgroundColor: '#FACC15',
+    backgroundColor: TL.amber,
     borderRadius: 999,
     paddingHorizontal: 18,
     paddingVertical: 7,
   },
   postBtnDisabled: { opacity: 0.4 },
-  postBtnText: { fontSize: 14, fontWeight: '700', color: '#111827' },
+  postBtnText: { fontSize: 14, fontWeight: '700', color: TL.bg },
   scroll: { flex: 1 },
   content: { padding: 16, gap: 16 },
   captionInput: {
     fontSize: 16,
-    color: '#111827',
+    color: TL.ink,
     minHeight: 120,
     textAlignVertical: 'top',
     lineHeight: 24,
@@ -204,42 +205,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  removeImgText: { color: '#fff', fontSize: 11, fontWeight: '700' },
+  removeImgText: { color: TL.ink, fontSize: 11, fontWeight: '700' },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   actionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#F3F4F6',
+    backgroundColor: TL.surface2,
     borderRadius: 999,
     paddingHorizontal: 14,
     paddingVertical: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: TL.borderStrong,
   },
   actionIcon: { fontSize: 16 },
-  actionLabel: { fontSize: 13, fontWeight: '600', color: '#374151' },
-  clearGame: { fontSize: 12, color: '#9CA3AF', marginLeft: 4 },
+  actionLabel: { fontSize: 13, fontWeight: '600', color: TL.ink2 },
+  clearGame: { fontSize: 12, color: TL.muted, marginLeft: 4 },
   gamePicker: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
+    borderColor: TL.border,
+    borderRadius: TL.radiusSm,
     overflow: 'hidden',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
   },
   gameSearchInput: {
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 14,
-    color: '#111827',
+    color: TL.ink,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: TL.border,
   },
   gameList: { maxHeight: 200 },
   gameRow: {
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: TL.border,
   },
-  gameRowSelected: { backgroundColor: '#FEF9C3' },
-  gameRowTitle: { fontSize: 14, color: '#111827' },
+  gameRowSelected: { backgroundColor: TL.amberSoft },
+  gameRowTitle: { fontSize: 14, color: TL.ink },
 })

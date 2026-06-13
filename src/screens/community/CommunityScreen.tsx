@@ -5,8 +5,10 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
 import { TL } from '@/constants/tl-theme'
 import { Avatar, SectionLabel, tlCard } from '@/components/tl-shared'
 
@@ -109,7 +111,11 @@ function GroupCard({
   bgColor: string
 }) {
   return (
-    <TouchableOpacity style={[styles.groupCard, { backgroundColor: bgColor }]}>
+    <TouchableOpacity
+      style={[styles.groupCard, { backgroundColor: bgColor }]}
+      onPress={() => Alert.alert(name, 'Group detail coming soon.')}
+      activeOpacity={0.7}
+    >
       {badge && (
         <View style={styles.groupBadge}>
           <Text style={styles.groupBadgeText}>{badge}</Text>
@@ -160,7 +166,11 @@ function ThreadRow({
   likes: number
 }) {
   return (
-    <TouchableOpacity style={styles.threadRow}>
+    <TouchableOpacity
+      style={styles.threadRow}
+      onPress={() => Alert.alert(group, 'Thread detail coming soon.')}
+      activeOpacity={0.7}
+    >
       <View style={styles.threadContent}>
         <View style={styles.threadMeta}>
           <Text style={styles.threadGroup}>{group}</Text>
@@ -206,16 +216,21 @@ function TrendingSection() {
 // ─── Composer pill ───────────────────────────────────────────────────────────
 
 function ComposerPill() {
+  const router = useRouter()
   return (
-    <View style={styles.composerPill}>
-      <Avatar name="Maya R" size={34} />
+    <TouchableOpacity
+      style={styles.composerPill}
+      onPress={() => router.push('/create')}
+      activeOpacity={0.7}
+    >
+      <Avatar name="You" size={34} />
       <Text style={styles.composerPlaceholder} numberOfLines={1}>
         What are you playing tonight?
       </Text>
-      <TouchableOpacity style={styles.composerBtn}>
+      <View style={styles.composerBtn}>
         <Text style={styles.composerBtnText}>+</Text>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableOpacity>
   )
 }
 

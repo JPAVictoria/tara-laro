@@ -159,32 +159,3 @@ export const amberBtn = {
 
 export const amberBtnText = { color: '#fff', fontWeight: '700' as const, fontSize: 13 }
 
-// ─── Games reference data ──────────────────────────────────────────────────
-
-export const GAMES: Record<
-  string,
-  { title: string; studio: string; genre: string; score: number; hype?: boolean }
-> = {
-  lumen: {
-    title: 'Lumen Drift',
-    studio: 'Quietmoon Studio',
-    genre: 'Open-world adventure',
-    score: 92,
-    hype: true,
-  },
-  hollow: { title: 'Hollow Echo', studio: 'Tidewell', genre: 'Soulslike', score: 88 },
-  honey: { title: 'Honeycomb Heist', studio: 'Comb Co.', genre: 'Co-op puzzle', score: 84 },
-  salt: { title: 'Tide of Salt', studio: 'Halfmast', genre: 'Survival sim', score: 79 },
-  neon: { title: 'Neon Garden', studio: 'Petalworks', genre: 'Idle / cozy', score: 91 },
-  pixel: { title: 'Pixel Bakery', studio: 'Crumb Bros', genre: 'Sim', score: 86 },
-  stardust: { title: 'Stardust Tavern', studio: 'Inn Keep', genre: 'Cozy RPG', score: 89 },
-  wraith: { title: 'Wraith Mile', studio: 'Lonelane', genre: 'Horror runner', score: 76 },
-  cobalt: {
-    title: 'Cobalt Choir',
-    studio: 'Hymnal',
-    genre: 'Rhythm narrative',
-    score: 94,
-    hype: true,
-  },
-  paper: { title: 'Paper Knights', studio: 'Fold & Fight', genre: 'Tactics', score: 81 },
-}

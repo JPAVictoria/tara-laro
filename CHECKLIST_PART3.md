@@ -54,7 +54,7 @@
 
 **File:** `src/modules/games/components/GameCard.tsx`
 
-- [ ] **Replace the gray placeholder box with a real image** — `GameCard` currently renders `<View style={styles.cover} />` (a static `#E5E7EB` box). It should render:
+- [x] **Replace the gray placeholder box with a real image** — `GameCard` currently renders `<View style={styles.cover} />` (a static `#E5E7EB` box). It should render:
   ```tsx
   import { Image } from 'expo-image'
   // ...
@@ -63,7 +63,7 @@
     : <View style={[styles.cover, styles.coverFallback]}><Text style={styles.coverQ}>?</Text></View>
   }
   ```
-- [ ] **Apply TL dark theme to `GameCard` styles** — `#E5E7EB` → `TL.surface2`, `#111827` → `TL.ink`, `#CA8A04` → `TL.amber`.
+- [x] **Apply TL dark theme to `GameCard` styles** — `#E5E7EB` → `TL.surface2`, `#111827` → `TL.ink`, `#CA8A04` → `TL.amber`.
 
 ---
 
@@ -71,7 +71,7 @@
 
 **File:** `src/components/game/GameCover.tsx`
 
-- [ ] **Accept `coverUrl?: string | null` as a prop** — when `coverUrl` is provided, render an `<Image>` instead of looking up the SVG map. The SVG art can stay as a fallback for screens still using mock IDs (Today, Library, Profile until they're migrated).
+- [x] **Accept `coverUrl?: string | null` as a prop** — when `coverUrl` is provided, render an `<Image>` instead of looking up the SVG map. The SVG art can stay as a fallback for screens still using mock IDs (Today, Library, Profile until they're migrated).
   ```tsx
   export function GameCover({ id, coverUrl, w, h, radius, flat }: GameCoverProps) {
     if (coverUrl) {
@@ -87,19 +87,11 @@
 
 **File:** `src/screens/today/TodayScreen.tsx`
 
-- [ ] **Remove `import { GAMES } from '@/components/tl-shared'`** — this is the entire mock layer for the Today screen.
-
-- [ ] **Today's Pick — load from real games API** — fetch the highest-rated game via `GET /api/games` (already sorted by `avgRating` desc). The first result becomes the "Today's Pick".
-  ```tsx
-  const { games } = useGames()
-  const todayPick = games[0] ?? null
-  ```
-
-- [ ] **"Pick up where you left off" — load from user's library** — this section requires a Library API (see Step 6). Until then, hide the section when there's no real library data instead of showing fake entries.
-
-- [ ] **"From your circle" — load from following feed** — `GET /api/posts` already returns a following feed. Map the latest posts from followed users into the friend activity row. If no one is followed, show "Follow some players to see their activity."
-
-- [ ] **"+ Library" button on Today Pick** — wire to `POST /api/library` (Step 6) or hide until library API is built.
+- [x] **Remove `import { GAMES } from '@/components/tl-shared'`** — done ✅
+- [x] **Today's Pick — load from real games API** — uses `useGames()[0]` (highest rated) ✅
+- [x] **"Pick up where you left off"** — shows "Add games to your library" placeholder until Library API is used ✅
+- [x] **"From your circle" — load from following feed** — wired to `GET /api/posts`, shows empty state when no posts ✅
+- [ ] **"+ Library" button on Today Pick** — wire to `POST /api/library`
 
 ---
 
@@ -115,42 +107,16 @@ The `DiscoverScreen` already fetches from the real API via `useGames()`. Once St
 
 > Currently there is no `UserGame` model in Prisma. The Library screen and "Now Playing" are entirely mock. This is the core differentiator of the app.
 
-- [ ] **Add `UserGame` model to `prisma/schema.prisma`**:
-  ```prisma
-  model UserGame {
-    id        String   @id @default(cuid())
-    userId    String
-    gameId    String
-    status    String   // "playing" | "wishlist" | "finished" | "dropped"
-    progress  Int      @default(0)   // 0–100
-    user      User     @relation(fields: [userId], references: [id])
-    game      Game     @relation(fields: [gameId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@unique([userId, gameId])
-  }
-  ```
-  Add the reverse relation `userGames UserGame[]` to both `User` and `Game` models.
-
-  > ⚠️ **Schema migration required** — run `npx prisma migrate dev --name add-user-game` after editing schema.
-
-- [ ] **`POST /api/library`** — add a game to the user's library with a status.
-  Returns `{ oldData, newData }`.
-
-- [ ] **`GET /api/library`** — returns the authenticated user's library entries (joined with Game data), filterable by `?status=playing`.
-
-- [ ] **`PATCH /api/library/[gameId]`** — update status or progress.
-
-- [ ] **Wire Library screen to real API** — replace the hardcoded `PLAYING_GAMES` array with data from `GET /api/library?status=playing`.
-
-- [ ] **Wire "Now Playing" on Profile screen** — fetch `GET /api/library?status=playing&limit=1` and show the first result. Hide the section if empty.
-
-- [ ] **Wire "Pick up where you left off" on Today screen** — fetch `GET /api/library?status=playing&limit=2`.
-
-- [ ] **Wire "Wishlist" / "Finished" / "Reviews" tabs in Library screen** — each tab calls `GET /api/library?status={tab}`.
-
-- [ ] **Wire "Library" stat count on Profile screen** — `GET /api/library` returns count; show in the stats row.
+- [x] **Add `UserGame` model to `prisma/schema.prisma`** — added with status, progress, relations ✅
+  > ⚠️ Still need to run: `npx prisma migrate dev --name add-user-game` then `npx prisma generate`
+- [x] **`POST /api/library`** — created at `src/app/api/library/index+api.ts` ✅
+- [x] **`GET /api/library`** — created, filterable by `?status=` and `?limit=` ✅
+- [x] **`PATCH /api/library/[gameId]`** — created at `src/app/api/library/[gameId]+api.ts` ✅
+- [x] **Wire Library screen to real API** — uses `GET /api/library`, all tabs filter by status ✅
+- [x] **Wire "Now Playing" on Profile screen** — fetches `GET /api/library?status=playing&limit=1` ✅
+- [ ] **Wire "Pick up where you left off" on Today screen** — pending library having real data
+- [x] **Wire "Wishlist" / "Finished" tabs in Library screen** — all tabs wired ✅
+- [ ] **Wire "Library" stat count on Profile screen** — pending
 
 ---
 
@@ -158,9 +124,8 @@ The `DiscoverScreen` already fetches from the real API via `useGames()`. Once St
 
 **File:** `src/screens/community/CommunityScreen.tsx`
 
-- [ ] **Remove `const GROUPS = [...]` and `const THREADS = [...]` local arrays** — these are entirely fake.
-
-- [ ] **Wire threads to real posts feed** — `GET /api/posts` already returns a feed. Map posts into the `ThreadRow` component (post content as title, user as author, likesCount/commentsCount as stats). Navigate on press to `/posts/${post.id}`.
+- [x] **Remove `const THREADS = [...]` local array** — removed ✅
+- [x] **Wire threads to real posts feed** — wired to `GET /api/posts`, navigates to `/posts/${id}` ✅
 
 - [ ] **Groups section** — there is no Group model in the schema. Either:
   - (a) Remove the groups grid until groups are built, or
@@ -178,7 +143,7 @@ The `DiscoverScreen` already fetches from the real API via `useGames()`. Once St
 
 **File:** `src/screens/profile/ProfileScreen.tsx`
 
-- [ ] **"Now Playing" section** — already noted in Step 6. Load from `GET /api/library?status=playing&limit=1` or hide if empty. Remove `import { GAMES }` from this file.
+- [x] **"Now Playing" section** — loads from `GET /api/library?status=playing&limit=1`, hidden if empty. `GAMES` import removed ✅
 
 ---
 
@@ -186,9 +151,8 @@ The `DiscoverScreen` already fetches from the real API via `useGames()`. Once St
 
 **File:** `src/screens/library/LibraryScreen.tsx`
 
-- [ ] **Remove `import { GAMES }` and the `PLAYING_GAMES` constant** — depends on Step 6 (Library API). Once `GET /api/library` is live, replace with a `useQuery` call.
-
-- [ ] **Shelf tab counts** — replace the hardcoded `count: 3 / 14 / 142 / 48` in `SHELF_TABS` with real counts from the library API response.
+- [x] **Remove `import { GAMES }` and the `PLAYING_GAMES` constant** — done, wired to real API ✅
+- [x] **Shelf tab counts** — pulled live from `GET /api/library` response ✅
 
 ---
 
@@ -204,9 +168,9 @@ The `DiscoverScreen` already fetches from the real API via `useGames()`. Once St
 
 ### Game images / covers
 
-- [ ] **`GameCover` uses hardcoded SVG keys, not real IDs** — `GameCover` resolves covers via a `COVER_MAP` dict keyed by mock strings (`'lumen'`, `'stardust'`, etc.). Real games from the database have UUID ids that never match, so every real game card shows the `?` fallback. `GameCover` needs to accept a `coverUrl` prop and render that instead of the SVG map when available.
+- [x] **`GameCover` uses hardcoded SVG keys, not real IDs** — `GameCover` resolves covers via a `COVER_MAP` dict keyed by mock strings (`'lumen'`, `'stardust'`, etc.). Real games from the database have UUID ids that never match, so every real game card shows the `?` fallback. `GameCover` needs to accept a `coverUrl` prop and render that instead of the SVG map when available.
 
-- [ ] **Game detail screen shows no cover image** — `GameDetailScreen` falls back to a `#E5E7EB` gray box when `game.coverUrl` is null/empty. The `coverUrl` field in the database may be empty for seeded games. Either seed real cover URLs or show a styled placeholder that matches TL dark theme.
+- [x] **Game detail screen shows no cover image** — `GameDetailScreen` falls back to a `#E5E7EB` gray box when `game.coverUrl` is null/empty. The `coverUrl` field in the database may be empty for seeded games. Either seed real cover URLs or show a styled placeholder that matches TL dark theme.
 
 - [ ] **"Game not found" on every game press from Discover** — The discover screen fetches real games from the DB (UUID ids). The `GameDetailScreen` fetches `/api/games/[id]` with that UUID. If the games table is empty the screen shows "Game not found". Run `npx prisma db seed` or manually seed at least a handful of games with `coverUrl` values so the detail screen has something to show.
 
@@ -259,11 +223,11 @@ The app has two parallel color systems. Dark-themed screens (auth, today, profil
 
 ### News card (`src/modules/news/components/NewsCard.tsx`)
 
-- [ ] **Card background** — `#FFFFFF` → `TL.surface`
-- [ ] **Border** — `#E5E7EB` → `TL.border`
-- [ ] **Title text** — `#111827` → `TL.ink`
-- [ ] **Source / time text** — `#9CA3AF` → `TL.muted`
-- [ ] **Source accent** — `#CA8A04` → `TL.amber`
+- [x] **Card background** — done ✅
+- [x] **Border** — done ✅
+- [x] **Title text** — done ✅
+- [x] **Source / time text** — done ✅
+- [x] **Source accent** — done ✅
 
 ---
 

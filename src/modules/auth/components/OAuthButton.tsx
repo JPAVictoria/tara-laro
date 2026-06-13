@@ -6,6 +6,7 @@ interface OAuthButtonProps {
   provider: Exclude<AuthProvider, 'email'>
   onPress: () => void
   disabled?: boolean
+  dark?: boolean
 }
 
 const iconConfig: Record<Exclude<AuthProvider, 'email'>, { name: string; color: string }> = {
@@ -13,11 +14,11 @@ const iconConfig: Record<Exclude<AuthProvider, 'email'>, { name: string; color: 
   discord: { name: 'discord', color: '#5865F2' },
 }
 
-export function OAuthButton({ provider, onPress, disabled }: OAuthButtonProps) {
+export function OAuthButton({ provider, onPress, disabled, dark }: OAuthButtonProps) {
   const { name, color } = iconConfig[provider]
   return (
     <TouchableOpacity
-      style={[styles.button, disabled && styles.disabled]}
+      style={[styles.button, dark && styles.buttonDark, disabled && styles.disabled]}
       onPress={onPress}
       disabled={disabled}
       accessibilityLabel={`Sign in with ${provider}`}
@@ -37,6 +38,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonDark: {
+    backgroundColor: '#1F1810',
+    borderColor: 'rgba(248,239,216,0.14)',
   },
   disabled: { opacity: 0.5 },
 })

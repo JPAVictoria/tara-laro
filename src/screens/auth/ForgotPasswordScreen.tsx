@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Alert, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Typography } from '@/components/ui/Typography'
 import { LogoIcon } from '@/components/logo'
 import { supabase } from '@/lib/supabase'
-import { Colors } from '@/constants/theme'
+import { TL } from '@/constants/tl-theme'
 
 export function ForgotPasswordScreen() {
   const [email, setEmail] = useState('')
@@ -35,30 +34,48 @@ export function ForgotPasswordScreen() {
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Typography variant="body" style={styles.backText}>← Back</Typography>
+          <TouchableOpacity onPress={() => router.back()} disabled={submitting}>
+            <Text style={styles.backText}>← Back</Text>
           </TouchableOpacity>
-          <LogoIcon size={40} />
+          <LogoIcon size={36} />
         </View>
 
-        <Typography variant="h2">reset password.</Typography>
-        <Typography variant="body" muted style={styles.subtitle}>
-          {sent ? 'Check your email for a reset link.' : "We'll send a reset link to your email."}
-        </Typography>
+        <Text style={styles.heading}>reset password.</Text>
+        <Text style={styles.subtitle}>
+          {sent
+            ? 'Check your email for a reset link.'
+            : "We'll send a reset link to your email."}
+        </Text>
+
+        {sent ? (
+          <View style={styles.successBox}>
+            <Text style={styles.successIcon}>✓</Text>
+            <Text style={styles.successText}>Reset link sent!</Text>
+            <Text style={styles.successSub}>Check your inbox and follow the link to set a new password.</Text>
+          </View>
+        ) : null}
 
         {!sent ? (
           <>
             <View style={styles.inputWrap}>
               <Input
+                dark
                 label="Email"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
+                editable={!submitting}
               />
             </View>
-            <Button label="Send reset link" onPress={handleReset} loading={submitting} fullWidth />
+            <Button
+              label="Send reset link"
+              onPress={handleReset}
+              loading={submitting}
+              disabled={submitting}
+              fullWidth
+            />
           </>
         ) : (
           <Button
@@ -74,10 +91,33 @@ export function ForgotPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.surface },
+  safe: { flex: 1, backgroundColor: TL.bg },
   container: { flex: 1, paddingHorizontal: 24 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, paddingBottom: 32 },
-  backText: { color: Colors.text2 },
-  subtitle: { marginTop: 4, marginBottom: 28 },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingBottom: 32,
+  },
+  backText: { fontSize: 15, color: TL.amber, fontWeight: '600' },
+
+  heading: { fontSize: 30, fontWeight: '900', color: TL.ink, letterSpacing: -0.5 },
+  subtitle: { fontSize: 15, color: TL.muted, marginTop: 4, marginBottom: 28 },
+
   inputWrap: { marginBottom: 24 },
+
+  successBox: {
+    backgroundColor: TL.surface,
+    borderWidth: 1,
+    borderColor: TL.borderStrong,
+    borderRadius: TL.radius,
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+  successIcon: { fontSize: 36, color: TL.good },
+  successText: { fontSize: 18, fontWeight: '800', color: TL.ink, marginTop: 8 },
+  successSub: { fontSize: 14, color: TL.muted, textAlign: 'center', marginTop: 6, lineHeight: 20 },
 })

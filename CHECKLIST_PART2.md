@@ -18,12 +18,12 @@
 ## 🟠 Profile Screen (`src/screens/profile/ProfileScreen.tsx`)
 
 - [x] **Settings button** — gear icon in top-right now links to `/settings` ✅
-- [ ] **All data is hardcoded** — "Maya Reyes", "@mayareyes", bio, "Manila, PH", "joined 2023", avatar initials "MR". Should load from the authenticated user session (`useAuth` / Supabase user profile).
-- [ ] **Stats row is hardcoded** — 247 games, 48 reviews, 12 lists, 1.2k followers. Should query real counts from the API (`/api/users/[id]` already returns `_count`).
-- [ ] **Follow button has no `onPress`** — should call the follow/unfollow API (`/api/users/[id]/follow`).
-- [ ] **Message button has no `onPress`** — either wire to a DM flow or hide until messaging is built.
-- [ ] **Entry tiles have no `onPress`** — Library, Reviews, Lists, Friends tiles are all tappable but do nothing. Each should navigate to the corresponding filtered view.
-- [ ] **"Library →" link in Now Playing has no handler** — should navigate to the Library/Discover tab.
+- [x] **All data is hardcoded** — profile now loads real displayName, @username, bio, and avatar initials from `GET /api/users/me` ✅
+- [x] **Stats row is hardcoded** — now shows real postsCount, followersCount, followingCount from API ✅
+- [x] **Follow button has no `onPress`** — replaced with "Edit Profile" button (navigates to `/settings`; Follow/Message only relevant on other users' profiles) ✅
+- [x] **Message button has no `onPress`** — removed; messaging not built yet ✅
+- [x] **Entry tiles have no `onPress`** — Library and Posts tiles navigate to Discover; Lists/Following show "coming soon" alert ✅
+- [x] **"Library →" link in Now Playing has no handler** — now navigates to Discover tab ✅
 - [ ] **Now Playing uses hardcoded game 'lumen'** — should load from actual user library API.
 - [ ] **"↑" / share button removed** — left placeholder spacer only. Consider wiring a share-profile action here later.
 

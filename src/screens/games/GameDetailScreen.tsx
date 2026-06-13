@@ -2,19 +2,42 @@ import {
   View,
   Text,
   ScrollView,
+  FlatList,
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native'
 import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
-import { useGame } from '@/modules/games'
-import { RatingStars } from '@/modules/games'
+import { useGame, useGames } from '@/modules/games'
+import { RatingStars, GameCard } from '@/modules/games'
 import { ReviewCard } from '@/modules/reviews'
 import { TL } from '@/constants/tl-theme'
 
 interface GameDetailScreenProps {
   gameId: string
+}
+
+function RelatedGames({ genre, currentId }: { genre: string; currentId: string }) {
+  const router = useRouter()
+  const { games } = useGames({ genre })
+  const related = games.filter((g) => g.id !== currentId).slice(0, 8)
+  if (related.length === 0) return null
+  return (
+    <View style={styles.relatedSection}>
+      <Text style={styles.reviewsTitle}>More like this</Text>
+      <FlatList
+        horizontal
+        data={related}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <GameCard game={item} onPress={() => router.push(`/games/${item.id}`)} />
+        )}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingRight: 16 }}
+      />
+    </View>
+  )
 }
 
 export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
@@ -106,6 +129,10 @@ export function GameDetailScreen({ gameId }: GameDetailScreenProps) {
         >
           <Text style={styles.writeReviewText}>✍️ Write a Review</Text>
         </TouchableOpacity>
+
+        {game.genre[0] && (
+          <RelatedGames genre={game.genre[0]} currentId={gameId} />
+        )}
       </View>
     </ScrollView>
   )
@@ -157,6 +184,7 @@ const styles = StyleSheet.create({
   reviewsTitle: { fontSize: 18, fontWeight: '700', color: TL.ink },
   seeAll: { fontSize: 14, color: TL.amber, fontWeight: '600' },
   noReviews: { fontSize: 14, color: TL.muted, textAlign: 'center', paddingVertical: 16 },
+  relatedSection: { marginTop: 24 },
   writeReviewBtn: {
     marginTop: 16,
     backgroundColor: TL.amber,

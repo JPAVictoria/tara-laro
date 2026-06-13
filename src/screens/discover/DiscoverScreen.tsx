@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'expo-router'
 import { GameCard } from '@/modules/games'
 import { NewsCard, useNews } from '@/modules/news'
+import { TL } from '@/constants/tl-theme'
 import type { Game } from '@/types'
 
 const GENRES = ['All', 'RPG', 'Action', 'Indie', 'Roguelike', 'Simulation', 'Souls-like']
@@ -83,7 +84,7 @@ export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
 
       {isLoading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#FACC15" />
+          <ActivityIndicator color={TL.amber} />
         </View>
       ) : showSections ? (
         <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -93,7 +94,7 @@ export function DiscoverScreen({ games, isLoading }: DiscoverScreenProps) {
               <FlatList
                 horizontal
                 data={articles}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.url}
                 renderItem={({ item }) => <NewsCard article={item} />}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.horizontalList}
@@ -152,11 +153,11 @@ function Section({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FAFAFA' },
+  safe: { flex: 1, backgroundColor: TL.bg },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderRadius: 12,
     marginHorizontal: 16,
     marginTop: 12,
@@ -164,32 +165,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     height: 44,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#E5E7EB',
+    borderColor: TL.borderStrong,
     gap: 8,
   },
   searchIcon: { fontSize: 16 },
-  searchInput: { flex: 1, fontSize: 15, color: '#111827' },
-  clearBtn: { fontSize: 14, color: '#9CA3AF', padding: 4 },
+  searchInput: { flex: 1, fontSize: 15, color: TL.ink },
+  clearBtn: { fontSize: 14, color: TL.faint, padding: 4 },
   genreScroll: { flexGrow: 0 },
   genreRow: { paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
   genreChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 999,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: TL.surface,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: TL.borderStrong,
   },
-  genreChipActive: { backgroundColor: '#FACC15', borderColor: '#FACC15' },
-  genreChipText: { fontSize: 13, fontWeight: '600', color: '#6B7280' },
-  genreChipTextActive: { color: '#111827' },
+  genreChipActive: { backgroundColor: TL.amber, borderColor: TL.amber },
+  genreChipText: { fontSize: 13, fontWeight: '600', color: TL.muted },
+  genreChipTextActive: { color: TL.bg },
   scroll: { flex: 1 },
   content: { paddingBottom: 80 },
   section: { marginTop: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: '#111827', paddingHorizontal: 16, marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '800', color: TL.ink, paddingHorizontal: 16, marginBottom: 12 },
   horizontalList: { paddingHorizontal: 16 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 },
-  emptyText: { fontSize: 14, color: '#6B7280' },
+  emptyText: { fontSize: 14, color: TL.muted },
   flatContent: { paddingHorizontal: 12, paddingBottom: 80 },
   row: { gap: 8, marginBottom: 8 },
 })

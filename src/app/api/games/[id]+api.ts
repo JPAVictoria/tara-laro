@@ -6,9 +6,14 @@ interface GameDetail extends Game {
   reviewsCount: number
 }
 
-export async function GET(_request: Request, { params }: { params: { id: string } }): Promise<Response> {
+export async function GET(_request: Request, context?: { params?: { id: string } }): Promise<Response> {
+  const id = context?.params?.id
+  if (!id) {
+    return Response.json({ data: null, error: 'Missing game ID' }, { status: 400 })
+  }
+
   const game = await prisma.game.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: {
       reviews: {
         where: { deleted: false },

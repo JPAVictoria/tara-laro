@@ -47,7 +47,7 @@ export async function GET(_request: Request): Promise<Response> {
       if (!title.trim() || !link.trim()) continue
 
       items.push({
-        id: Buffer.from(link).toString('base64').slice(0, 24),
+        id: Buffer.from(link).toString('base64url'),
         title: stripHtml(title).trim(),
         summary: stripHtml(description).slice(0, 200),
         imageUrl: enclosureUrl,

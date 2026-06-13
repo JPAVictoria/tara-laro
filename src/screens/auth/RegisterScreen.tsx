@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   dividerLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: Colors.muted },
   dividerLabel: { marginHorizontal: 12 },
-  oauth: { gap: 10 },
+  oauth: { flexDirection: 'row', justifyContent: 'center', gap: 16 },
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 32, paddingBottom: 16 },
   link: { color: Colors.primaryDark, fontWeight: '700' },
 })

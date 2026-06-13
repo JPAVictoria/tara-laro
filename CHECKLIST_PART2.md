@@ -67,26 +67,26 @@
 - [x] **Dark theme** — converted from light (#FAFAFA) to TL dark theme ✅
 - [x] **Duplicate key crash in news FlatList** — fixed, now uses `item.url` as key ✅
 - [ ] **NewsCard has no `onPress`** — tapping a news article should open the article URL (`Linking.openURL(article.url)`).
-- [ ] **GameCard "See all" section links** — "All Games", "Trending Games", "New Releases" section headers have no "See all" navigation.
+- [x] **GameCard "See all" section links** — "All Games", "Trending Games", "New Releases" now each have a "See all" button that routes to `/search` ✅
 
 ---
 
 ## 🟡 Search Screen (`src/app/search.tsx`)
 
-- [ ] **User search returns nothing** — the search query initialises `users: []` and never fetches users. If user search is intended, wire it to `/api/users?search=`.
-- [ ] **Tapping a user result** — check whether the user result row navigates to the user profile; if not, add `router.push('/users/' + user.id)`.
+- [x] **User search returns nothing** — added `GET /api/users?search=` endpoint and wired it in the search function ✅
+- [x] **Tapping a user result** — user rows now appear under "Players" and navigate to `/users/[username]` ✅
 
 ---
 
 ## 🟡 Settings Screen (`src/app/settings.tsx`)
 
-- [ ] Appears fully functional (edit profile, avatar upload, change password, sign out). **Confirm sign-out redirects to `/login` after calling `supabase.auth.signOut()`** — verify the auth listener in `_layout.tsx` handles this.
+- [x] Sign-out already calls `router.replace('/(auth)/login')` immediately after `signOut()` ✅
 
 ---
 
 ## 🟡 Dead/Leftover Files
 
-- [ ] **`src/app/explore.tsx`** — contains the Expo starter template boilerplate (file-based routing docs, collapsible sections, animated images). This is not a real app screen. Either repurpose it or delete it.
+- [x] **`src/app/explore.tsx`** — deleted, was Expo starter boilerplate with no links to it ✅
 
 ---
 

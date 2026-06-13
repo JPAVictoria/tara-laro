@@ -9,8 +9,8 @@
 ## 🔴 Critical — App feels broken
 
 ### Tab Navigation (`src/app/(tabs)/_layout.tsx`)
-- [ ] **"Library" tab routes to DiscoverScreen** — the tab labeled "Library" actually renders `DiscoverScreen`. `LibraryScreen` exists but is unreachable from the tab bar. Either rename the tab to "Discover" or swap in `LibraryScreen`.
-- [ ] **"Create" tab is hidden** (`href: null`) — there is no floating action button or other entry point to `CreateScreen`. Users cannot create posts at all from the main nav. Add a FAB on the feed or restore the tab.
+- [x] **"Library" tab routes to DiscoverScreen** — renamed tab label to "Discover" to match `DiscoverScreen` ✅
+- [x] **"Create" tab is hidden** — added FAB on Today/home screen that navigates to `/create` ✅
 - [ ] **Notifications vs Community mismatch** — the `notifications` tab is labelled "Community" and renders `CommunityScreen`. If real per-user notifications exist (Day 25 Supabase Realtime was built), they need their own tab/screen.
 
 ---
@@ -41,11 +41,11 @@
 
 ## 🟠 Today / Home Screen (`src/screens/today/TodayScreen.tsx`)
 
-- [ ] **Date and greeting are hardcoded** — "Wednesday, May 20" and "Hey, Maya." should use `new Date()` and the real user's display name.
-- [ ] **Header ◎ button has no `onPress`** — remove or wire to notifications/search.
+- [x] **Date and greeting are hardcoded** — now uses `new Date()` and the authenticated user's name from session ✅
+- [x] **Header ◎ button has no `onPress`** — now navigates to `/search` ✅
 - [ ] **"+ Library" button has no `onPress`** — tapping "Add to Library" on the Today Pick should call the library-add API.
 - [ ] **Editorial quote is hardcoded** — static placeholder text. Either pull from a real editorial API or remove the section.
-- [ ] **"See all" / section right-links have no navigation** — three section labels show link text but `SectionLabel` never receives a press handler. Pass an `onPress` prop or replace with a `TouchableOpacity` wrapper.
+- [x] **"See all" / section right-links have no navigation** — `SectionLabel` now accepts `onPress`; Continue links to Discover tab, Friends links to Community tab ✅
 - [ ] **All games are hardcoded mock data** — 'lumen', 'stardust', 'neon', 'cobalt', 'hollow' from the local GAMES object. Should load from the real games API.
 - [ ] **Friend activity rows are hardcoded** — Theo, Kira, Jules are fictional. Should load from the following feed or remove the section.
 

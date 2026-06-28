@@ -10,7 +10,7 @@
     "primaryColor": "#FACC15",
     "backgroundColor": "#14100A",
     "description": "The gaming community app for the global gamer. Discover games, write reviews, follow gamers, and share your gaming journey.",
-    "platforms": ["ios", "android"],
+    "platforms": ["ios", "android", "web"],
     "ios": {
       "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.taralaro.app",
